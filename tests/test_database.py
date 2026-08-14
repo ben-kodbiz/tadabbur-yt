@@ -45,6 +45,8 @@ def test_source_upsert_and_get(repo):
     row = repo.get_source("s1")
     assert row["name"] == "Channel A"
     assert row["enabled"] == 1
+    assert row["platform"] == "youtube"
+    assert row["channel_url"] == "https://youtube.com/@a"
 
     repo.upsert_source(
         source_id="s1", name="Channel A2", channel_url="https://youtube.com/@a", enabled=False
@@ -52,6 +54,7 @@ def test_source_upsert_and_get(repo):
     row = repo.get_source("s1")
     assert row["name"] == "Channel A2"
     assert row["enabled"] == 0
+    assert row["platform"] == "youtube"
 
 
 def test_media_unique_per_source(repo):

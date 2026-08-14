@@ -11,7 +11,7 @@ from tadabbur.config import load_settings
 from tadabbur.database import Repository, open_database
 from tadabbur.exporters import export_web_data
 from tadabbur.publishers import FilesystemPublisher, InternetArchivePublisher
-from tadabbur.services.publish import run_publish
+from tadabbur.services.publish import publish as publish_engine
 from tadabbur.status import PUBLISHED, READY_TO_PUBLISH
 
 
@@ -86,7 +86,7 @@ def test_internet_archive_requires_library(settings, repo, tmp_path):
 # ---------------------------------------------------------------- publish service
 def test_publish_service_success(settings, repo, tmp_path):
     mid = _seed_ready(repo, tmp_path)
-    output = run_publish(settings, repo, publisher_name="filesystem")
+    output = publish_engine(repo, settings, publisher_name="filesystem")
     row = repo.get_media(mid)
     assert row["status"] == PUBLISHED
     job = repo._conn.execute(
@@ -99,7 +99,7 @@ def test_publish_service_success(settings, repo, tmp_path):
 def test_publish_service_ignores_unknown_publisher(settings, repo, tmp_path):
     _seed_ready(repo, tmp_path)
     with pytest.raises(ValueError):
-        run_publish(settings, repo, publisher_name="nope")
+        publish_engine(repo, settings, publisher_name="nope")
 
 
 def test_publish_not_ready(settings, repo, tmp_path):
@@ -107,7 +107,7 @@ def test_publish_not_ready(settings, repo, tmp_path):
     repo.transition_media(mid, READY_TO_PUBLISH)
     # set media to DISCOVERED to ensure it's skipped
     repo.set_media_status(mid, "DISCOVERED")
-    output = run_publish(settings, repo, publisher_name="filesystem", video_id="videoone1234")
+    output = publish_engine(repo, settings, publisher_name="filesystem", video_id="videoone1234")
     assert "not found or not ready" in output
 
 

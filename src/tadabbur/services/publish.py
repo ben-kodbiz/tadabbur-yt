@@ -7,7 +7,7 @@ Publishing is resumable and isolated: a failure marks the publish job as failed
 from __future__ import annotations
 
 from tadabbur.config.models import Settings
-from tadabbur.database import Repository
+from tadabbur.database import Repository, open_database
 from tadabbur.logging import stage_logger, tag
 from tadabbur.publishers import (
     FilesystemPublisher,
@@ -32,13 +32,37 @@ def get_publisher(settings: Settings, name: str, repo: Repository) -> Publisher:
 
 def run_publish(
     settings: Settings,
-    repo: Repository,
+    *,
+    publisher: str = "internet_archive",
+    video_id: str | None = None,
+    limit: int = 10,
+) -> str:
+    db_path = settings.storage.database_path
+    if not db_path.is_absolute():
+        db_path = settings.project_dir / db_path
+    conn = open_database(db_path)
+    try:
+        return publish(
+            repository=Repository(conn),
+            settings=settings,
+            publisher_name=publisher,
+            video_id=video_id,
+            limit=limit,
+        )
+    finally:
+        conn.close()
+
+
+def publish(
+    repository: Repository,
+    settings: Settings,
     *,
     publisher_name: str = "internet_archive",
     video_id: str | None = None,
     limit: int = 10,
 ) -> str:
-    """Publish media in READY_TO_PUBLISH state (or a specific video)."""
+    """Engine: publish media in READY_TO_PUBLISH state (or a specific video)."""
+    repo = repository
     publisher = get_publisher(settings, publisher_name, repo)
     lines: list[str] = []
 

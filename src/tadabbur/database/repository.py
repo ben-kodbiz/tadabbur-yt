@@ -58,7 +58,7 @@ class Repository:
                 publication_policy = excluded.publication_policy,
                 updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
             """,
-            (source_id, name, channel_url, platform, channel_id,
+            (source_id, name, platform, channel_url, channel_id,
              int(enabled), language, rights_status, int(download_policy), int(publication_policy)),
         )
         self._conn.commit()

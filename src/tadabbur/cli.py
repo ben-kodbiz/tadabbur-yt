@@ -21,10 +21,11 @@ app = typer.Typer(
 console = Console()
 
 _VERBOSE = False
+_GLOBAL_CONFIG: Optional[str] = None
 
 
 def _settings(config: Optional[str]) -> object:
-    return load_settings(config_file=config)
+    return load_settings(config_file=config or _GLOBAL_CONFIG)
 
 
 def _version_callback(value: bool) -> None:
@@ -46,8 +47,10 @@ def main(
     ),
 ) -> None:
     """Shared CLI options."""
-    global _VERBOSE
+    global _VERBOSE, _GLOBAL_CONFIG
     _VERBOSE = verbose
+    if config:
+        _GLOBAL_CONFIG = config
 
 
 @app.command("discover")
@@ -123,6 +126,17 @@ def publish(
 
     settings = _settings(config)
     console.print(run_publish(settings, publisher=publisher, video_id=video_id))
+
+
+@app.command("export")
+def export(
+    config: Optional[str] = typer.Option(None, "--config", "-c", help="Path to config file."),
+) -> None:
+    """Export publishable media to web JSON files."""
+    from tadabbur.services.export import run_export_service
+
+    settings = _settings(config)
+    console.print(run_export_service(settings))
 
 
 @app.command("worker")

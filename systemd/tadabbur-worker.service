@@ -1,0 +1,19 @@
+[Unit]
+Description=Tadabbur worker (queue processing)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tadabbur
+Group=tadabbur
+WorkingDirectory=/opt/tadabbur
+Environment=TADABBUR_CONFIG=/opt/tadabbur/config/config.yaml
+ExecStart=/opt/tadabbur/.venv/bin/tadabbur worker
+KillSignal=SIGTERM
+TimeoutStopSec=90
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

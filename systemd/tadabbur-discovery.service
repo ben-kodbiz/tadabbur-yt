@@ -1,0 +1,17 @@
+[Unit]
+Description=Tadabbur media discovery
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=tadabbur
+Group=tadabbur
+WorkingDirectory=/opt/tadabbur
+Environment=TADABBUR_CONFIG=/opt/tadabbur/config/config.yaml
+ExecStart=/opt/tadabbur/.venv/bin/tadabbur discover
+ExecStart=/opt/tadabbur/.venv/bin/tadabbur classify
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

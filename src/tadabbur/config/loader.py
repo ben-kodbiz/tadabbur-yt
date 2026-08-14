@@ -58,6 +58,11 @@ def load_settings(
         config_path = base / CONFIG_DIR_NAME / DEFAULT_CONFIG_NAME
     config_path = Path(config_path)
 
+    # When an explicit config file is supplied, treat its directory as the
+    # project root so relative storage/log paths stay next to the config.
+    if project_dir is None and config_file is not None:
+        base = config_path.resolve().parent
+
     data: dict[str, Any] = {}
     if config_path.exists():
         data = _read_yaml(config_path)
