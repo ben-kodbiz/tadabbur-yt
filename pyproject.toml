@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tadabbur"
+version = "0.1.0"
+description = "Local-first Tadabbur media ingestion and cataloguing pipeline"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Tadabbur Pipeline Contributors" }]
+keywords = ["tadabbur", "quran", "yt-dlp", "archive", "pipeline"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Internet :: WWW/HTTP",
+]
+
+dependencies = [
+    "typer>=0.12",
+    "PyYAML>=6.0",
+    "pydantic>=2.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+]
+qwen = ["transformers>=4.40"]
+ia = ["internetarchive>=3.5"]
+transcribe = ["faster-whisper>=1.0"]
+
+[project.scripts]
+tadabbur = "tadabbur.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

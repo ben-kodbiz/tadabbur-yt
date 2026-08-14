@@ -1,0 +1,67 @@
+# Tadabbur Pipeline default configuration.
+# Copy to your own config and override via TADABBUR_* env vars.
+
+log_level: INFO
+
+sources: []
+
+download:
+  format: "bestvideo[height<=720]+bestaudio/best[height<=720]"
+  merge_output_format: mp4
+  audio_format: m4a
+  audio_quality: 5
+  write_subs: false
+  write_auto_subs: false
+  sub_langs: "en.*"
+  keep_video: true
+  retries: 3
+  fragment_retries: 3
+  concurrent_fragments: 4
+  timeout: 30
+  socket_timeout: 30
+  limit_rate: null
+
+proxy:
+  enabled: false
+  url: ""
+  health_check: true
+  health_check_timeout: 10
+
+backoff:
+  base_delay: 10.0
+  max_delay: 600.0
+  max_attempts: 5
+  jitter: 0.1
+  multiplier: 2.0
+
+circuit_breaker:
+  enabled: true
+  failure_threshold: 5
+  cooldown_seconds: 900
+  half_open_attempts: 1
+
+classification:
+  default_category: other
+  confidence_threshold: 0.6
+  qwen_enabled: false
+  qwen_model: "Qwen/Qwen2.5-3B-Instruct"
+  qwen_conf_threshold: 0.7
+  manual_review_on_low_confidence: true
+
+storage:
+  base_dir: data
+  media_dir: null
+  database_dir: null
+  exports_dir: null
+
+archive:
+  archive_file: null
+  keep_source_video: true
+  keep_subtitles: true
+  keep_thumbnail: true
+
+scheduler:
+  enabled: false
+  discovery_time: "07:00"
+  worker_interval_minutes: 60
+  dry_run: false

@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+*.so
+
+# Virtual environments
+.venv/
+venv/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Tool caches
+.mypy_cache/
+.ruff_cache/
+.pyright/
+
+# Data produced by the pipeline
+data/database/
+data/media/
+data/exports/
+logs/
+*.sqlite
+*.sqlite3
+*.db
+
+# yt-dlp
+*.part
+*.ytdl
+
+# Local environment
+.env
+.env.*
+*.local
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store

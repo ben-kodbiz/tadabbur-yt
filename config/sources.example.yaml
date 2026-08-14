@@ -1,0 +1,29 @@
+# Example sources configuration.
+# Add real channels here or in your own config file.
+#
+# rules:
+#   include: keywords that signal relevant content (e.g. tadabbur, tafsir)
+#   exclude: keywords that signal irrelevant content (e.g. shorts, promo)
+# rights_status / publication_policy control whether content may be published.
+# publication_policy: false  -> never publish (archive/keep metadata only)
+
+sources:
+  - id: ustaz_example
+    name: "Ustaz Example"
+    platform: youtube
+    channel_url: "https://www.youtube.com/@ustaz-example"
+    channel_id: null
+    enabled: false
+    language: ms
+    rules:
+      include:
+        - tadabbur
+        - tafsir
+        - quran
+      exclude:
+        - shorts
+        - promo
+        - announcement
+    rights_status: unknown
+    download_policy: true
+    publication_policy: false
