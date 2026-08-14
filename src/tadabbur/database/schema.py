@@ -131,6 +131,16 @@ CREATE TABLE IF NOT EXISTS publish_jobs (
     updated_at           TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 
+CREATE TABLE IF NOT EXISTS state_transitions (
+    id                   INTEGER PRIMARY KEY AUTOINCREMENT,
+    media_id             INTEGER NOT NULL REFERENCES media(id),
+    from_status          TEXT NOT NULL,
+    to_status            TEXT NOT NULL,
+    created_at           TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_transitions_media ON state_transitions(media_id);
+
 CREATE INDEX IF NOT EXISTS idx_media_status ON media(status);
 CREATE INDEX IF NOT EXISTS idx_media_source_external ON media(source_id, external_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_media ON processing_jobs(media_id);

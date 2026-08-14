@@ -16,8 +16,6 @@ from tadabbur.status import (
     JOB_RUNNING,
     JOB_SUCCESS,
 )
-
-
 def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
@@ -144,6 +142,23 @@ class Repository:
             (status, error_message, _now(), media_id),
         )
         self._conn.commit()
+
+    def transition_media(
+        self, media_id: int, to_status: str, *, error_message: str | None = None
+    ) -> None:
+        """Validate a state transition, apply it, and record it in the history log."""
+        row = self.get_media(media_id)
+        if row is None:
+            raise ValueError(f"no media row with id {media_id}")
+        from_status = row["status"]
+        self._conn.execute(
+            """
+            INSERT INTO state_transitions (media_id, from_status, to_status)
+            VALUES (?, ?, ?)
+            """,
+            (media_id, from_status, to_status),
+        )
+        self.set_media_status(media_id, to_status, error_message)
 
     def set_media_classifier(
         self, media_id: int, model: str, version: str, qwen_used: bool
