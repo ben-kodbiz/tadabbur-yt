@@ -105,3 +105,26 @@ def test_teraweh_ruqyah_context_counts():
     assert extract_quran_reference(
         "Teraweh surah Al Isra' ayat 1-37"
     ).surah_number == 17
+
+
+def test_date_prefix_not_parsed_as_ayah():
+    ref = extract_quran_reference(
+        "16-06-2026 Ustaz Ahmad Hasyimi : Tadabbur Surah Al-An'am Siri Ke-57"
+    )
+    assert ref.surah_number == 6  # Al-An'am
+    assert ref.ayah_start is None
+
+
+def test_session_number_not_parsed_as_ayah():
+    ref = extract_quran_reference(
+        "05-03-2026 Ustaz Ahmad Hasyimi : Tadabbur Surah Al-An'am Siri Ke-35"
+    )
+    assert ref.ayah_start is None
+    assert ref.ayah_end is None
+
+
+def test_quality_and_date_prefix_stripped():
+    ref = extract_quran_reference(
+        "(4K) 03-05-2026 Ustaz Rizal Azizan : Hikmah"
+    )
+    assert ref.surah_number is None

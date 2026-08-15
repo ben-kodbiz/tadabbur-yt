@@ -60,11 +60,33 @@ class QuranReference:
         }
 
 
+def _strip_dates(text: str) -> str:
+    """Remove date prefixes like '16-06-2026' or '(4K) 05-03-2026' that
+    otherwise get misread as ayah ranges (16-6)."""
+    t = re.sub(
+        r"^\s*(?:\(\s*\d{1,4}\s*[kKpP]?[pP]?\s*\)\s*)?"
+        r"\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}\s*[:|\-]?\s*",
+        "",
+        text,
+    )
+    # Strip session markers ("Siri Ke-57", "Sesi 2", "Part 1") so the session
+    # number is not misread as an ayah number.
+    t = re.sub(
+        r"\b(siri|sesi|episod|episode|part|jilid|bhg\.?|bahagian)\b"
+        r"(?:\s+(?:ke|ke-|no\.?|no)\s*|\s*[:#]?\s*|\s*[-#]\s*)\d+\b",
+        " ",
+        t,
+        flags=re.IGNORECASE,
+    )
+    return t
+
+
 def extract_quran_reference(text: str | None) -> QuranReference:
     """Parse a surah/ayah reference from a title or description."""
     if not text:
         return QuranReference()
 
+    text = _strip_dates(text)
     surah = find_surah(text)
     ref = QuranReference()
 
