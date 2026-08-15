@@ -128,13 +128,26 @@ DISCOVERED ─▶ CLASSIFIED ─▶ QUEUED ─▶ DOWNLOADING ─▶ DOWNLOADED
 
 ### Storage layout
 
+Organised by ustaz, then series. Multi-session series (e.g. "Tadabbur Surah
+Al-Baqarah Sesi 1..90") share **one** folder named after the series/surah, and
+each session is saved as a numbered audio file:
+
 ```
-data/
-├── database/tadabbur.sqlite
-├── media/<speaker>/<year>/<month>/<source-id>/<VIDEO_ID>/
-│   ├── audio.m4a  source.mp4  metadata.json  thumbnail.jpg
-└── exports/lectures.json  speakers.json  surahs.json  categories.json  tags.json
+data/media/
+├── <ustaz>/
+│   ├── <series or surah name>/          # e.g. "Surah Al-An'am"
+│   │   ├── 01 - <session title>.m4a     # session 1
+│   │   ├── 02 - <session title>.m4a     # session 2
+│   │   └── metadata.json
+│   └── <single video title>/
+│       └── audio.m4a
+└── ...
 ```
+
+Series detection (in `src/tadabbur/metadata/series.py`) strips date/quality/
+ustaz prefixes and session markers ("Siri Ke-35", "Sesi 2", "Part 1", ...) so
+that all sessions of a surah-based series collapse into the same folder.
+Discovery records `series_key` + `session_number` per video in SQLite.
 
 ## Tests
 
