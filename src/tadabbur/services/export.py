@@ -7,14 +7,14 @@ from tadabbur.database import Repository, open_database
 from tadabbur.exporters import export_web_data
 
 
-def run_export_service(settings: Settings) -> str:
+def run_export_service(settings: Settings, *, mode: str = "publish") -> str:
     db_path = settings.storage.database_path
     if not db_path.is_absolute():
         db_path = settings.project_dir / db_path
     conn = open_database(db_path)
     try:
         repo = Repository(conn)
-        result = export_web_data(settings, repo)
+        result = export_web_data(settings, repo, mode=mode)
         return str(result)
     finally:
         conn.close()

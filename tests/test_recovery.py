@@ -116,3 +116,45 @@ def test_circuit_breaker_blocks_after_failures(settings, repo):
     breaker.record_failure()
     breaker.record_failure()
     assert breaker.allow_request() is False  # open during cooldown
+
+
+def test_interrupted_download_recovers_and_retries(settings, repo):
+    """A crash mid-download leaves media in DOWNLOADING; it must be retried."""
+    from tadabbur.services.classification import classify
+
+    run_discovery(settings, repo, client=FlakyClient(settings))
+    classify(repo, settings)
+    assert repo.get_media_by_external_id("abc11111111")["status"] == QUEUED
+
+    # Simulate a crash: item was in DOWNLOADING when the process died.
+    repo.transition_media(
+        repo.get_media_by_external_id("abc11111111")["id"], "DOWNLOADING"
+    )
+    assert repo.get_media_by_external_id("abc11111111")["status"] == "DOWNLOADING"
+
+    # A fresh run must recover it and finish.
+    client = FlakyClient(settings)
+    breaker = CircuitBreaker(settings.circuit_breaker)
+    outcomes = run_download(settings, repo, client=client, circuit_breaker=breaker, sleep=lambda _: None)
+    assert outcomes[0].status == PROCESSED
+    assert repo.get_media_by_external_id("abc11111111")["status"] == PROCESSED
+
+
+def test_interrupted_audio_processing_with_existing_audio_recovered(settings, repo):
+    """AUDIO_PROCESSING with an existing valid audio file is advanced, not redone."""
+    from tadabbur.services.classification import classify
+
+    run_discovery(settings, repo, client=FlakyClient(settings))
+    classify(repo, settings)
+    mid = repo.get_media_by_external_id("abc11111111")["id"]
+
+    # Complete the download so an audio file exists.
+    run_download(settings, repo, client=FlakyClient(settings), sleep=lambda _: None)
+    assert repo.get_media(mid)["status"] == PROCESSED
+
+    # Simulate a crash that left the media in AUDIO_PROCESSING but audio valid.
+    repo.transition_media(mid, "AUDIO_PROCESSING")
+    outcomes = run_download(settings, repo, client=FlakyClient(settings), sleep=lambda _: None)
+    # no re-download performed; recovered directly
+    assert outcomes == []
+    assert repo.get_media(mid)["status"] == PROCESSED

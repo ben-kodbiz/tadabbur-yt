@@ -6,7 +6,7 @@ log_level: INFO
 sources: []
 
 download:
-  format: "bestvideo[height<=720]+bestaudio/best[height<=720]"
+  format: "bestvideo+bestaudio/best"
   merge_output_format: mp4
   audio_format: m4a
   audio_quality: 5

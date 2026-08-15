@@ -37,25 +37,42 @@ def export_web_data(
     repo: Repository,
     *,
     export_dir: Path | None = None,
+    mode: str = "publish",
 ) -> ExportResult:
-    """Export publishable media as JSON for the web application."""
+    """Export media as JSON for the web application.
+
+    ``mode="publish"`` exports only content that may be published publicly.
+    ``mode="library"`` exports everything that has been downloaded (audio on
+    disk) for internal reference, regardless of publication policy.
+    """
     out_dir = export_dir or settings.storage.resolved_exports_dir
     if not out_dir.is_absolute():
         out_dir = settings.project_dir / out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Only content that is publishable appears in the web export.
-    rows = repo._conn.execute(
-        """
-        SELECT m.*, s.name AS speaker_name, s.platform AS source_platform
-        FROM media m
-        JOIN sources s ON s.id = m.source_id
-        WHERE m.publication_policy = 1
-          AND m.rights_status IN ('open_license', 'permission_obtained', 'source_permitted')
-          AND m.status IN ('READY_TO_PUBLISH', 'PUBLISHED')
-        ORDER BY m.published_at DESC
-        """
-    ).fetchall()
+    if mode == "library":
+        rows = repo._conn.execute(
+            """
+            SELECT m.*, s.name AS speaker_name, s.platform AS source_platform
+            FROM media m
+            JOIN sources s ON s.id = m.source_id
+            WHERE m.status = 'PROCESSED'
+            ORDER BY m.published_at DESC
+            """
+        ).fetchall()
+    else:
+        # Only content that is publishable appears in the public web export.
+        rows = repo._conn.execute(
+            """
+            SELECT m.*, s.name AS speaker_name, s.platform AS source_platform
+            FROM media m
+            JOIN sources s ON s.id = m.source_id
+            WHERE m.publication_policy = 1
+              AND m.rights_status IN ('open_license', 'permission_obtained', 'source_permitted')
+              AND m.status IN ('READY_TO_PUBLISH', 'PUBLISHED')
+            ORDER BY m.published_at DESC
+            """
+        ).fetchall()
 
     speakers: dict[str, dict] = {}
     surahs: dict[int, dict] = {}
@@ -100,6 +117,17 @@ def export_web_data(
                     ref["ayah_start"] = int(parts[0])
                     ref["ayah_end"] = int(parts[-1])
 
+        media_root = settings.storage.resolved_media_dir
+        if not media_root.is_absolute():
+            media_root = settings.project_dir / media_root
+        audio_url = None
+        if audio:
+            try:
+                rel = Path(audio["path"]).resolve().relative_to(media_root.resolve())
+                audio_url = f"/media/{rel}"
+            except ValueError:
+                audio_url = f"/media/{Path(audio['path']).name}"
+
         lectures.append(
             {
                 "id": row["external_id"],
@@ -116,6 +144,7 @@ def export_web_data(
                 "duration": row["duration"],
                 "source_url": row["url"],
                 "audio_path": audio["path"] if audio else None,
+                "audio_url": audio_url,
                 "rights_status": row["rights_status"],
             }
         )

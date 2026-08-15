@@ -55,8 +55,11 @@ class FakeYtClient:
 
     def inspect(self, url):
         vid = url.split("=")[-1]
-        return {"id": vid, "webpage_url": url, "title": "title", "description": None,
-                "channel": "Channel One", "upload_date": "20260801", "duration": 3600}
+        entry = next((e for e in self.entries if e["id"] == vid), None)
+        return {"id": vid, "webpage_url": url,
+                "title": entry["title"] if entry else "title",
+                "description": None, "channel": "Channel One",
+                "upload_date": "20260801", "duration": 3600}
 
     def download_video(self, url, output_template):
         return FakeResult(0)

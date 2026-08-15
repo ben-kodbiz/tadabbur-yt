@@ -18,6 +18,8 @@ CONTROLLED_TAGS = frozenset(
         "quran",
         "tadabbur",
         "tafsir",
+        "fiqh",
+        "sirah",
         "sabar",
         "syukur",
         "taqwa",
@@ -74,12 +76,16 @@ def generate_tags(*, title: str, category: str, source_id: str | None = None) ->
     tags: list[str] = []
     blob = _normalize(f"{title} {category}")
 
-    if category in {"tadabbur", "tafsir", "quran"}:
+    if category in {"tadabbur", "tafsir", "quran", "fiqh", "sirah"}:
         tags.append("quran")
     if category == "tadabbur":
         tags.append("tadabbur")
     elif category == "tafsir":
         tags.append("tafsir")
+    elif category == "fiqh":
+        tags.append("fiqh")
+    elif category == "sirah":
+        tags.append("sirah")
 
     ref = extract_quran_reference(title)
     if ref.has_surah:

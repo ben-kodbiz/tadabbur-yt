@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tadabbur Library</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <h1>Perpustakaan Audio Tadabbur</h1>
+    <p class="subtitle">Senarai kuliah yang telah dimuat turun</p>
+  </header>
+
+  <main>
+    <section class="controls">
+      <input type="search" id="search" placeholder="Cari tajuk, surah, penceramah...">
+      <select id="filter-category">
+        <option value="">Semua kategori</option>
+        <option value="tafsir">Tafsir</option>
+        <option value="tadabbur">Tadabbur</option>
+        <option value="fiqh">Fiqh</option>
+        <option value="sirah">Sirah</option>
+        <option value="quran">Quran</option>
+      </select>
+      <select id="filter-speaker">
+        <option value="">Semua penceramah</option>
+      </select>
+    </section>
+
+    <section id="player" class="player hidden">
+      <audio id="audio" controls preload="metadata"></audio>
+      <div class="now-playing" id="now-playing"></div>
+    </section>
+
+    <section class="stats" id="stats"></section>
+
+    <ul id="lectures" class="lectures"></ul>
+
+    <p id="empty" class="empty hidden">Tiada rekod dijumpai.</p>
+  </main>
+
+  <footer>
+    <p>Tadabbur Library &middot; data tempatan &middot; <a id="source-link" href="#">sumber</a></p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

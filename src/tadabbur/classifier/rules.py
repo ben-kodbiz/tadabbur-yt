@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from tadabbur.config.models import Source
 from tadabbur.metadata.quran_ref import extract_quran_reference
 
-CATEGORIES = ("tadabbur", "tafsir", "quran", "other")
+CATEGORIES = ("tadabbur", "tafsir", "quran", "fiqh", "sirah", "other")
 
 # Global include/exclude keyword lists (configurable per source via source.rules).
 _DEFAULT_INCLUDE = (
@@ -27,6 +27,10 @@ _DEFAULT_INCLUDE = (
     "tajwid",
     "qur'an",
     "quranic",
+    "fiqh",
+    "sirah",
+    "sirah nabawiyyah",
+    "sirah nabawiah",
 )
 _DEFAULT_EXCLUDE = (
     "shorts",
@@ -50,7 +54,10 @@ class Classification:
 
     @property
     def is_accepted(self) -> bool:
-        return self.category in {"tadabbur", "tafsir", "quran"}
+        # Only Fiqh / sirah / tadabbur / tafsir are downloaded.
+        # Quran recitation ("Bacaan ...") is detected as category "quran" and
+        # rejected (not lecture content).
+        return self.category in {"tadabbur", "tafsir", "fiqh", "sirah"}
 
 
 def _normalize(text: str) -> str:
@@ -133,6 +140,12 @@ def classify_metadata(
         confidence = 0.95
     elif any(k in blob_lower for k in ("tafsir",)):
         category = "tafsir"
+        confidence = 0.9
+    elif any(k in blob_lower for k in ("fiqh",)):
+        category = "fiqh"
+        confidence = 0.9
+    elif any(k in blob_lower for k in ("sirah", "sirah nabawiyyah", "sirah nabawiah")):
+        category = "sirah"
         confidence = 0.9
     elif any(k in blob_lower for k in ("quran", "qur'an", "quranic", "surah", "ayat")):
         category = "quran"

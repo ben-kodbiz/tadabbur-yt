@@ -6,6 +6,7 @@ titles and descriptions (English, Malay, romanized Arabic spellings).
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 
@@ -170,6 +171,15 @@ def _normalize(text: str) -> str:
     )
 
 
+def _tokens(text: str) -> list[str]:
+    """Split text into normalized word tokens (keeps word boundaries)."""
+    import unicodedata
+
+    nfkd = unicodedata.normalize("NFKD", text)
+    without_diacritics = "".join(c for c in nfkd if not unicodedata.combining(c))
+    return [w for w in re.split(r"[^a-z0-9]+", without_diacritics.lower()) if w]
+
+
 def _build_lookup() -> None:
     if _ALIAS_LOOKUP:
         return
@@ -182,24 +192,57 @@ def _build_lookup() -> None:
 
 _build_lookup()
 
+# Token sequences for whole-word phrase matching.
+_ALIAS_TOKENS: dict[tuple[str, ...], Surah] = {}
+
+
+def _build_phrase_lookup() -> None:
+    if _ALIAS_TOKENS:
+        return
+    for surah in SURAHS:
+        for candidate in (surah.transliteration, surah.english, *surah.aliases):
+            tokens = tuple(_tokens(candidate))
+            if tokens:
+                _ALIAS_TOKENS.setdefault(tokens, surah)
+
+
+_build_phrase_lookup()
+
 
 def get_surah_by_number(number: int) -> Surah | None:
     return _BY_NUMBER.get(number)
 
 
 def find_surah(text: str) -> Surah | None:
-    """Find the first surah mentioned in ``text``, or None."""
-    normalized = _normalize(text)
-    if not normalized:
+    """Find the first surah mentioned in ``text``, or None.
+
+    Uses whole-word matching so that e.g. "nas" inside "binasyurga" does not
+    match surah An-Nas, and a person named "Muhammad" only matches when the
+    name appears as a word on its own.
+    """
+    text_tokens = _tokens(text)
+    if not text_tokens:
         return None
+
     best: Surah | None = None
-    best_index = len(normalized) + 1
-    for alias, surah in _ALIAS_LOOKUP.items():
-        idx = normalized.find(alias)
-        if idx != -1 and idx < best_index:
+    best_pos = len(text_tokens) + 1
+    for tokens, surah in _ALIAS_TOKENS.items():
+        pos = _find_phrase(text_tokens, tokens)
+        if pos is not None and pos < best_pos:
             best = surah
-            best_index = idx
+            best_pos = pos
     return best
+
+
+def _find_phrase(haystack: list[str], needle: tuple[str, ...]) -> int | None:
+    """Return the start index of ``needle`` as a contiguous token phrase."""
+    n = len(needle)
+    if n == 0 or n > len(haystack):
+        return None
+    for i in range(len(haystack) - n + 1):
+        if haystack[i : i + n] == list(needle):
+            return i
+    return None
 
 
 def all_surahs() -> tuple[Surah, ...]:

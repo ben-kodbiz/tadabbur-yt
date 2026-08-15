@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from tadabbur.config.models import Settings
 from tadabbur.database import Repository, open_database
+from tadabbur.downloader.manager import _cleanup_partial_outputs
+from tadabbur.jobs.paths import media_directory
 from tadabbur.status import FAILED, QUEUED
 
 
@@ -30,6 +34,16 @@ def run_retry(settings: Settings, *, failed: bool = False, video_id: str | None 
             rows = repo.list_failed()
 
         for row in rows:
+            _cleanup_partial_outputs(
+                media_directory(
+                    settings,
+                    speaker=row["uploader"] or row["channel"],
+                    source_id=row["source_id"],
+                    video_id=row["external_id"],
+                    published_at=row["published_at"],
+                ),
+                row["external_id"],
+            )
             repo.transition_media(int(row["id"]), QUEUED)
             lines.append(f"{row['external_id']} -> QUEUED")
             count += 1

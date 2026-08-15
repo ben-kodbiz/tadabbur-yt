@@ -52,7 +52,7 @@ class Source(BaseModel):
 class DownloadConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    format: str = "bestvideo[height<=720]+bestaudio/best[height<=720]"
+    format: str = "bestvideo+bestaudio/best"
     merge_output_format: str = "mp4"
     audio_format: str = "m4a"
     audio_quality: int = 5
@@ -67,6 +67,7 @@ class DownloadConfig(BaseModel):
     timeout: int = 30
     socket_timeout: int = 30
     limit_rate: str | None = None
+    audio_only: bool = False
 
 
 class ProxyConfig(BaseModel):

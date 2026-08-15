@@ -131,12 +131,27 @@ def publish(
 @app.command("export")
 def export(
     config: Optional[str] = typer.Option(None, "--config", "-c", help="Path to config file."),
+    mode: str = typer.Option("publish", "--mode", help="'publish' or 'library'."),
 ) -> None:
-    """Export publishable media to web JSON files."""
+    """Export media to web JSON files (publish or internal library)."""
     from tadabbur.services.export import run_export_service
 
     settings = _settings(config)
-    console.print(run_export_service(settings))
+    console.print(run_export_service(settings, mode=mode))
+
+
+@app.command("serve")
+def serve(
+    config: Optional[str] = typer.Option(None, "--config", "-c", help="Path to config file."),
+    host: str = typer.Option("127.0.0.1", "--host"),
+    port: int = typer.Option(8000, "--port"),
+    mode: str = typer.Option("library", "--mode", help="'publish' or 'library'."),
+) -> None:
+    """Serve the web display locally (simple HTTP server)."""
+    from tadabbur.services.serve import run_serve
+
+    settings = _settings(config)
+    run_serve(settings, host=host, port=port, mode=mode)
 
 
 @app.command("worker")

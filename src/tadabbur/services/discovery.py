@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from tadabbur.config.models import Settings
 from tadabbur.database import Repository, open_database
-from tadabbur.discovery import run_discovery
+from tadabbur.discovery import run_discovery as engine_run_discovery
 
 
 def run_discovery(
@@ -20,7 +20,7 @@ def run_discovery(
     conn = open_database(db_path)
     try:
         repo = Repository(conn)
-        result = run_discovery(
+        result = engine_run_discovery(
             settings,
             repo,
             source_id=source_id,

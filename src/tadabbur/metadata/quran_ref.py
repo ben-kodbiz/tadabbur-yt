@@ -17,6 +17,14 @@ _BARE_RANGE = re.compile(r"(?<!ayat)\b(\d{1,3})\s*[-–]\s*(\d{1,3})\b", re.IGNO
 # "255" as a standalone ayah number
 _BARE_SINGLE = re.compile(r"(?<!ayat)\b(\d{1,3})\b")
 
+# Words that signal we are talking about the Quran itself, required before a
+# surah-only mention is treated as a reference (avoids matching person names).
+_QURAN_CONTEXT = re.compile(
+    r"\b(surah|surat|sura|ayat|quran|qur'an|quranic|al-quran|alquran|tafsir|"
+    r"tadabbur|recitation|bacaan|ruqyah|teraweh|tarawih|tadarus|tilawah)\b",
+    re.IGNORECASE,
+)
+
 
 @dataclass
 class QuranReference:
@@ -59,7 +67,10 @@ def extract_quran_reference(text: str | None) -> QuranReference:
 
     surah = find_surah(text)
     ref = QuranReference()
-    if surah:
+
+    # A surah mention alone (no ayat) is only accepted with quran context,
+    # so a person named "Muhammad" or "Hud" does not create a reference.
+    if surah and _QURAN_CONTEXT.search(text):
         ref.surah = surah
         ref.surah_number = surah.number
         ref.surah_name = surah.transliteration

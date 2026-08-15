@@ -9,13 +9,12 @@ from dataclasses import dataclass, field
 from tadabbur.config.models import Settings, Source
 from tadabbur.database import Repository
 from tadabbur.downloader.client import YtDlpClient, YtDlpError
+from tadabbur.jobs.paths import normalize_upload_date
 from tadabbur.logging import stage_logger, tag
 
 logger = stage_logger("discovery")
 
 _STATUS = "DISCOVERED"
-
-_DATE_PATTERN = re.compile(r"^(\d{4})(\d{2})(\d{2})$")
 
 
 @dataclass
@@ -47,16 +46,6 @@ def normalize_video_id(raw: str) -> str:
     if re.fullmatch(r"[\w-]{11}", vid):
         return vid
     raise ValueError(f"cannot normalize video id from {raw!r}")
-
-
-def normalize_upload_date(raw: str | None) -> str | None:
-    """Convert yt-dlp ``upload_date`` (YYYYMMDD) to ISO date (YYYY-MM-DD)."""
-    if not raw:
-        return None
-    m = _DATE_PATTERN.match(raw.strip())
-    if not m:
-        return None
-    return f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
 
 
 def build_media_record(source: Source, entry: dict) -> dict:

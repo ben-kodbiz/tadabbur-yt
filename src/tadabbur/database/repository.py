@@ -170,6 +170,37 @@ class Repository:
         )
         self._conn.commit()
 
+    def enrich_media(
+        self,
+        media_id: int,
+        *,
+        title: str | None = None,
+        description: str | None = None,
+        uploader: str | None = None,
+        channel: str | None = None,
+        published_at: str | None = None,
+        duration: int | None = None,
+        thumbnail_url: str | None = None,
+    ) -> None:
+        """Update authoritative source fields from an inspect call."""
+        self._conn.execute(
+            """
+            UPDATE media SET
+                title = COALESCE(?, title),
+                description = COALESCE(?, description),
+                uploader = COALESCE(?, uploader),
+                channel = COALESCE(?, channel),
+                published_at = COALESCE(?, published_at),
+                duration = COALESCE(?, duration),
+                thumbnail_url = COALESCE(?, thumbnail_url),
+                updated_at = ?
+            WHERE id = ?
+            """,
+            (title, description, uploader, channel, published_at,
+             duration, thumbnail_url, _now(), media_id),
+        )
+        self._conn.commit()
+
     def list_failed(self) -> list[sqlite3.Row]:
         return self._conn.execute(
             "SELECT * FROM media WHERE status = 'FAILED' ORDER BY updated_at DESC"

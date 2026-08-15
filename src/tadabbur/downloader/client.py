@@ -7,6 +7,7 @@ the application never builds subprocess commands directly.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 import time
@@ -46,6 +47,14 @@ class YtDlpResult:
     def text(self) -> str:
         return (self.stdout or "").strip()
 
+    @property
+    def transfer_rate(self) -> str | None:
+        """Best-effort download rate from yt-dlp progress lines (e.g. '3.6MiB/s')."""
+        match = re.search(
+            r"(\d+(?:\.\d+)?\s*(?:[KMGT]?i?B)/s)", self.stderr or ""
+        )
+        return match.group(1) if match else None
+
 
 def _bool(v: bool) -> str:
     return "true" if v else "false"
@@ -62,7 +71,7 @@ class YtDlpClient:
     # ------------------------------------------------------------- lifecycle
     def version(self) -> str:
         if self._version is None:
-            result = self.run(["--version"])
+            result = self.run([self.binary, "--version"])
             self._version = result.text
         return self._version
 
@@ -215,6 +224,34 @@ class YtDlpClient:
             str(d.audio_quality),
             "--format",
             "bestaudio",
+            "--output",
+            output_template,
+        ]
+        if proxy:
+            args += ["--proxy", proxy]
+        args += self._common_download_args()
+        args.append(url)
+        return self.run(args)
+
+    def download_lowest(
+        self,
+        url: str,
+        output_template: str,
+        *,
+        proxy: str | None = None,
+    ) -> YtDlpResult:
+        """Download the smallest audio source for audio-only extraction.
+
+        Prefers an already-encapsulated m4a/AAC stream (format ``140``) so no
+        re-encode is needed; falls back to ``bestaudio``. FFmpeg is only used
+        to correct the container if required (fast).
+        """
+        args = self._base_args() + [
+            "--no-part",
+            "--newline",
+            "--progress",
+            "--format",
+            "140/bestaudio",
             "--output",
             output_template,
         ]

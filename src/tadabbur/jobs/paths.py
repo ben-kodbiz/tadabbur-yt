@@ -12,6 +12,17 @@ from pathlib import Path
 from tadabbur.config.models import Settings
 
 _SAFE = re.compile(r"[^a-z0-9._-]+", re.IGNORECASE)
+_DATE_PATTERN = re.compile(r"^(\d{4})(\d{2})(\d{2})$")
+
+
+def normalize_upload_date(raw: str | None) -> str | None:
+    """Convert yt-dlp ``upload_date`` (YYYYMMDD) to ISO date (YYYY-MM-DD)."""
+    if not raw:
+        return None
+    m = _DATE_PATTERN.match(raw.strip())
+    if not m:
+        return None
+    return f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
 
 
 def slugify(value: str | None) -> str:

@@ -76,3 +76,32 @@ def test_build_quran_tags():
     tags = build_quran_tags(ref)
     assert "surah-al-kahf" in tags
     assert "ayah-1-10" in tags
+
+
+def test_no_false_positive_person_name_muhammad():
+    """A person named Muhammad must not trigger a surah reference."""
+    ref = extract_quran_reference(
+        "Solat Gerhana Bulan : Ust Nik Muhammad Aiman. Alunan suara yang mendamaikan."
+    )
+    assert ref.surah_number is None
+    assert not ref.is_valid
+
+
+def test_no_false_positive_substring_nas():
+    """'nas' inside another word (e.g. binasyurga) must not match An-Nas."""
+    ref = extract_quran_reference(
+        "Membina Syurga dalam rumah tangga Ustaz Khairul Ikhwan Al-Muqri'"
+    )
+    assert ref.surah_number is None
+
+
+def test_surah_requires_quran_context():
+    """A surah name without quran context words is not a reference."""
+    assert extract_quran_reference("Ust Khairul Ikhwan Al Muqri").surah_number is None
+    assert extract_quran_reference("Surah Yasin").surah_number == 36
+
+
+def test_teraweh_ruqyah_context_counts():
+    assert extract_quran_reference(
+        "Teraweh surah Al Isra' ayat 1-37"
+    ).surah_number == 17

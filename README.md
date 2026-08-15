@@ -83,13 +83,39 @@ tadabbur download            # download queued media + extract audio
 tadabbur process --video VIDEO_ID   # one video end-to-end
 tadabbur validate            # gate media before publication
 tadabbur publish --publisher filesystem   # or internet_archive (default)
-tadabbur export              # write web/data JSON files
+tadabbur export              # write web/data JSON files (publish mode)
+tadabbur export --mode library   # include all downloaded audio (internal)
+tadabbur serve               # local web display of the library
 tadabbur worker --once       # run a single worker pass
 tadabbur status              # pipeline summary
 tadabbur failed              # list failed items
 tadabbur retry --failed      # re-queue failed items
 tadabbur inspect VIDEO_ID    # full record
 ```
+
+### Audio-only mode
+
+By default the pipeline downloads video + extracts audio. Set in config:
+
+```yaml
+download:
+  audio_only: true   # download the smallest m4a/AAC source (no video, no transcode)
+  keep_video: false  # free disk by not keeping the source file
+```
+
+`audio_only` prefers YouTube format 140 (native m4a/AAC) so no re-encoding is
+needed — a 40-min lecture downloads in seconds rather than minutes.
+
+### Web display
+
+```bash
+tadabbur serve --port 8000
+```
+
+Opens a simple HTML/JS library at `http://127.0.0.1:8000` with search, category
+and speaker filters, and an audio player. It reads exported JSON
+(`--mode library` includes everything downloaded, `--mode publish` only
+publishable content) and serves the audio files from the media directory.
 
 ### Pipeline states
 
