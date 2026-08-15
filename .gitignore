@@ -31,6 +31,9 @@ logs/
 *.sqlite3
 *.db
 
+# Channel-specific download collections (large runtime data)
+PMT_tadabbur/
+
 # yt-dlp
 *.part
 *.ytdl
