@@ -78,11 +78,17 @@ function matchesFilters(lec) {
   return true;
 }
 
+function isFailed(lec) {
+  return lec.status === "FAILED";
+}
+
 function render() {
   const filtered = state.lectures.filter(matchesFilters);
   el.list.innerHTML = "";
 
-  el.stats.textContent = `${filtered.length} kuliah daripada ${state.lectures.length} jumlah`;
+  const okCount = filtered.filter((l) => !isFailed(l)).length;
+  const failCount = filtered.length - okCount;
+  el.stats.textContent = `${filtered.length} kuliah (${okCount} sedia, ${failCount} gagal) daripada ${state.lectures.length} jumlah`;
 
   if (filtered.length === 0) {
     el.empty.classList.remove("hidden");
@@ -95,10 +101,13 @@ function render() {
   for (const lec of filtered) {
     const li = document.createElement("li");
     li.className = "lecture";
+    const failed = isFailed(lec);
+    if (failed) li.classList.add("failed");
 
     const title = document.createElement("div");
     title.className = "title";
     title.appendChild(badge(lec.category));
+    if (failed) title.appendChild(failedBadge());
     title.appendChild(document.createTextNode(lec.title));
 
     const meta = document.createElement("div");
@@ -125,9 +134,18 @@ function render() {
     li.appendChild(meta);
     if (tags.childNodes.length) li.appendChild(tags);
 
-    li.addEventListener("click", () => play(lec));
+    if (!failed && lec.audio_url) {
+      li.addEventListener("click", () => play(lec));
+    }
     el.list.appendChild(li);
   }
+}
+
+function failedBadge() {
+  const span = document.createElement("span");
+  span.className = "badge failed-badge";
+  span.textContent = "gagal";
+  return span;
 }
 
 function badge(category) {

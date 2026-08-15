@@ -56,7 +56,7 @@ def export_web_data(
             SELECT m.*, s.name AS speaker_name, s.platform AS source_platform
             FROM media m
             JOIN sources s ON s.id = m.source_id
-            WHERE m.status = 'PROCESSED'
+            WHERE m.status IN ('PROCESSED', 'FAILED', 'READY_TO_PUBLISH', 'PUBLISHED')
             ORDER BY m.published_at DESC
             """
         ).fetchall()
@@ -146,6 +146,8 @@ def export_web_data(
                 "audio_path": audio["path"] if audio else None,
                 "audio_url": audio_url,
                 "rights_status": row["rights_status"],
+                "status": row["status"],
+                "error": row["error_message"],
             }
         )
 

@@ -102,6 +102,13 @@ main { max-width: 860px; margin: 0 auto; padding: 16px 16px 48px; }
   color: var(--accent);
 }
 
+.lecture.failed { opacity: .65; cursor: default; }
+.lecture.failed .title { color: #b3261e; }
+.failed-badge {
+  background: #fdecea;
+  color: #b3261e;
+}
+
 .empty { color: var(--muted); text-align: center; padding: 40px 0; }
 .hidden { display: none; }
 
