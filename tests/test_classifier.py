@@ -72,6 +72,7 @@ def test_source_include_rules_used_in_service(tmp_path):
     cfg.write_text(
         yaml.safe_dump(
             {
+                "storage": {"base_dir": str(tmp_path / "data")},
                 "sources": [
                     {
                         "id": "ustaz",

@@ -12,6 +12,7 @@ from tadabbur.config.models import Settings
 from tadabbur.database import Repository
 from tadabbur.downloader.circuit_breaker import CircuitBreaker
 from tadabbur.downloader.client import YtDlpClient, YtDlpError
+from tadabbur.downloader.diagnose import diagnose_error
 from tadabbur.downloader.retry import RetryExhaustedError, retry
 from tadabbur.downloader.validator import validate_audio_file, validate_file
 from tadabbur.jobs.paths import media_directory, normalize_upload_date, output_template
@@ -227,17 +228,29 @@ def _download_one(
             )
         except (YtDlpError, OSError, TimeoutError) as exc:
             error = str(exc)
+            diagnosis = diagnose_error(error)
             breaker.record_failure()
             repo.record_download_attempt(
                 media_id=media_id,
                 attempt=attempt,
                 status="failed",
                 ytdlp_version=client.version() if client.available() else None,
-                error=error,
+                error=diagnosis.summary,
                 started_at=started,
             )
-            last_error = error
-            logger.warning("[DOWNLOAD] video=%s attempt=%d failed: %s", vid, attempt, error)
+            last_error = diagnosis.summary
+            logger.warning(
+                "[DOWNLOAD] video=%s attempt=%d failed: %s%s",
+                vid, attempt, diagnosis.summary,
+                f" | hint: {diagnosis.hint}" if diagnosis.hint else "",
+            )
+            if not diagnosis.is_retryable:
+                logger.warning(
+                    "[DOWNLOAD] video=%s stopping (non-retryable): %s "
+                    "(change proxy in config, then `tadabbur retry --failed`)",
+                    vid, diagnosis.summary,
+                )
+                break
             if attempt >= max_attempts:
                 break
             delay = _compute_backoff(settings, attempt)

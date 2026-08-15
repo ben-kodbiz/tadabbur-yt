@@ -132,6 +132,12 @@ function render() {
 
     li.appendChild(title);
     li.appendChild(meta);
+    if (failed && lec.error) {
+      const err = document.createElement("div");
+      err.className = "error-line";
+      err.textContent = lec.error;
+      li.appendChild(err);
+    }
     if (tags.childNodes.length) li.appendChild(tags);
 
     if (!failed && lec.audio_url) {

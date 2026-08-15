@@ -108,6 +108,14 @@ main { max-width: 860px; margin: 0 auto; padding: 16px 16px 48px; }
   background: #fdecea;
   color: #b3261e;
 }
+.error-line {
+  margin-top: 6px;
+  font-size: .75rem;
+  color: #b3261e;
+  background: #fdecea;
+  border-radius: 6px;
+  padding: 6px 8px;
+}
 
 .empty { color: var(--muted); text-align: center; padding: 40px 0; }
 .hidden { display: none; }
