@@ -7,7 +7,8 @@ from pathlib import Path
 from tadabbur.config.models import Settings
 from tadabbur.database import Repository, open_database
 from tadabbur.downloader.manager import _cleanup_partial_outputs
-from tadabbur.jobs.paths import media_directory
+from tadabbur.jobs.paths import series_directory
+from tadabbur.metadata.series import series_info
 from tadabbur.status import FAILED, QUEUED
 
 
@@ -34,13 +35,12 @@ def run_retry(settings: Settings, *, failed: bool = False, video_id: str | None 
             rows = repo.list_failed()
 
         for row in rows:
+            si = series_info(row["title"])
             _cleanup_partial_outputs(
-                media_directory(
+                series_directory(
                     settings,
                     speaker=row["uploader"] or row["channel"],
-                    source_id=row["source_id"],
-                    video_id=row["external_id"],
-                    published_at=row["published_at"],
+                    series_folder=si.folder,
                 ),
                 row["external_id"],
             )

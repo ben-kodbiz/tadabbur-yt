@@ -15,7 +15,13 @@ from tadabbur.downloader.client import YtDlpClient, YtDlpError
 from tadabbur.downloader.diagnose import diagnose_error
 from tadabbur.downloader.retry import RetryExhaustedError, retry
 from tadabbur.downloader.validator import validate_audio_file, validate_file
-from tadabbur.jobs.paths import media_directory, normalize_upload_date, output_template
+from tadabbur.jobs.paths import (
+    media_directory,
+    normalize_upload_date,
+    output_template,
+    series_directory,
+)
+from tadabbur.metadata.series import SeriesInfo, series_info
 from tadabbur.logging import stage_logger, tag
 from tadabbur.status import (
     AUDIO_PROCESSING,
@@ -133,12 +139,11 @@ def _recover_interrupted(
             continue
 
         # Incomplete output: delete partial media files, reset to QUEUED.
-        directory = media_directory(
+        si = series_info(row["title"])
+        directory = series_directory(
             settings,
             speaker=row["uploader"] or row["channel"],
-            source_id=row["source_id"],
-            video_id=row["external_id"],
-            published_at=row["published_at"],
+            series_folder=si.folder,
         )
         _cleanup_partial_outputs(directory, row["external_id"])
         logger.warning(
@@ -303,12 +308,14 @@ def _perform_download(
         thumbnail_url=info.get("thumbnail"),
     )
     row = repo.get_media(media_id)
-    directory = media_directory(
+    # Organize by series: multi-session titles share one folder named after
+    # the series/surah; single videos get their own folder.
+    si = series_info(row["title"])
+    series_folder = si.folder if si.is_series else si.folder
+    directory = series_directory(
         settings,
         speaker=row["uploader"] or row["channel"],
-        source_id=row["source_id"],
-        video_id=vid,
-        published_at=row["published_at"],
+        series_folder=series_folder,
     )
     directory.mkdir(parents=True, exist_ok=True)
 
@@ -318,6 +325,7 @@ def _perform_download(
         source_id=row["source_id"],
         video_id=vid,
         published_at=row["published_at"],
+        series_folder=series_folder,
     )
 
     meta_path = directory / "metadata.json"
@@ -331,11 +339,13 @@ def _perform_download(
     #    audio_only: fetch the smallest source and convert to m4a via FFmpeg.
     #    otherwise:  keep the video as-is and extract audio with yt-dlp.
     if settings.download.audio_only:
-        audio_file = _download_audio_only(settings, repo, client, directory, tpl, media_id, vid, url)
+        audio_file = _download_audio_only(
+            settings, repo, client, directory, tpl, media_id, vid, url, si=si
+        )
         video_file = None
     else:
         video_file = _download_video(settings, repo, client, directory, tpl, media_id, vid, url)
-        audio_file = _download_audio(settings, repo, client, directory, tpl, media_id, vid, url)
+        audio_file = _download_audio(settings, repo, client, directory, tpl, media_id, vid, url, si=si)
 
     av = validate_audio_file(audio_file)
     if not av.valid:
@@ -377,7 +387,8 @@ def _download_video(settings, repo, client, directory, tpl, media_id, vid, url) 
     return _find_downloaded_file(directory, vid)
 
 
-def _download_audio(settings, repo, client, directory, tpl, media_id, vid, url) -> Path:
+def _download_audio(settings, repo, client, directory, tpl, media_id, vid, url,
+                    si: SeriesInfo | None = None) -> Path:
     """Extract audio with yt-dlp's native extraction (video kept)."""
     repo.transition_media(media_id, AUDIO_PROCESSING)
     existing = _find_existing_valid(directory, vid, settings, audio=True)
@@ -390,10 +401,29 @@ def _download_audio(settings, repo, client, directory, tpl, media_id, vid, url) 
     audio_file = _find_audio_file(directory, vid, settings.download.audio_format)
     if audio_file is None:
         raise YtDlpError(f"audio file not found in {directory}")
+    # rename to session-aware canonical name when part of a series
+    canonical = directory / _canonical_audio_name(settings, si, vid)
+    if si is not None and si.is_series and audio_file != canonical:
+        audio_file.replace(canonical)
+        audio_file = canonical
     return audio_file
 
 
-def _download_audio_only(settings, repo, client, directory, tpl, media_id, vid, url) -> Path:
+def _canonical_audio_name(settings, si: SeriesInfo, vid: str) -> str:
+    """Filename for the canonical audio.
+
+    Series videos: "<NN> - <short-title>.m4a" so sessions sort naturally.
+    Single videos: "audio.m4a".
+    """
+    ext = settings.download.audio_format
+    if si is not None and si.is_series and si.session_number is not None:
+        label = f"{si.session_number:02d} - {si.short_title}"
+        return f"{label}.{ext}"
+    return f"audio.{ext}"
+
+
+def _download_audio_only(settings, repo, client, directory, tpl, media_id, vid, url,
+                         si: SeriesInfo | None = None) -> Path:
     """Audio-only path: fetch the smallest source (prefer already-m4a/AAC),
     and only convert via FFmpeg when the source is not already canonical.
 
@@ -404,7 +434,7 @@ def _download_audio_only(settings, repo, client, directory, tpl, media_id, vid, 
 
     repo.transition_media(media_id, AUDIO_PROCESSING)
 
-    canonical = directory / f"audio.{settings.download.audio_format}"
+    canonical = directory / _canonical_audio_name(settings, si, vid)
     if canonical.exists() and canonical.stat().st_size > 0:
         logger.info("[DOWNLOAD] video=%s reusing canonical audio %s", vid, canonical.name)
         return canonical

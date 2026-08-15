@@ -11,6 +11,7 @@ from tadabbur.database import Repository
 from tadabbur.downloader.client import YtDlpClient, YtDlpError
 from tadabbur.jobs.paths import normalize_upload_date
 from tadabbur.logging import stage_logger, tag
+from tadabbur.metadata.series import series_info
 
 logger = stage_logger("discovery")
 
@@ -57,17 +58,21 @@ def build_media_record(source: Source, entry: dict) -> dict:
         video_id = raw_id
 
     url = entry.get("webpage_url") or f"https://www.youtube.com/watch?v={video_id}"
+    title = str(entry.get("title") or "(untitled)")
+    si = series_info(title)
     return {
         "source_id": source.id,
         "external_id": video_id,
         "url": url,
-        "title": str(entry.get("title") or "(untitled)"),
+        "title": title,
         "description": (entry.get("description") or None),
         "uploader": (entry.get("uploader") or entry.get("channel") or None),
         "channel": (entry.get("channel") or source.name),
         "published_at": normalize_upload_date(entry.get("upload_date")),
         "duration": entry.get("duration"),
         "thumbnail_url": (entry.get("thumbnail") or None),
+        "series_key": si.folder if si.is_series else None,
+        "session_number": si.session_number if si.is_series else None,
         "status": _STATUS,
         "rights_status": source.rights_status,
         "publication_policy": bool(source.publication_policy),

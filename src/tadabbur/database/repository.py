@@ -91,18 +91,20 @@ class Repository:
         status: str = "DISCOVERED",
         rights_status: str = "unknown",
         publication_policy: bool = False,
+        series_key: str | None = None,
+        session_number: int | None = None,
     ) -> int:
         cur = self._conn.execute(
             """
             INSERT INTO media
                 (source_id, external_id, url, title, description, uploader, channel,
-                 published_at, duration, thumbnail_url, status, rights_status,
-                 publication_policy)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 published_at, duration, thumbnail_url, series_key, session_number,
+                 status, rights_status, publication_policy)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (source_id, external_id, url, title, description, uploader, channel,
-             published_at, duration, thumbnail_url, status, rights_status,
-             int(publication_policy)),
+             published_at, duration, thumbnail_url, series_key, session_number,
+             status, rights_status, int(publication_policy)),
         )
         self._conn.commit()
         return int(cur.lastrowid)

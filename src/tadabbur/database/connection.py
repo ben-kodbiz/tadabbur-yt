@@ -29,24 +29,48 @@ def migrate(conn: sqlite3.Connection) -> None:
     cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='schema_version'")
     if cur.fetchone() is None:
         conn.executescript(SCHEMA_SQL)
-        conn.execute("INSERT OR REPLACE INTO schema_version (version) VALUES (?)", (SCHEMA_VERSION,))
+        conn.execute("INSERT INTO schema_version (version) VALUES (?)", (SCHEMA_VERSION,))
         conn.commit()
         return
 
     row = conn.execute("SELECT version FROM schema_version ORDER BY version DESC LIMIT 1").fetchone()
     if row is None:
         conn.executescript(SCHEMA_SQL)
-        conn.execute("INSERT OR REPLACE INTO schema_version (version) VALUES (?)", (SCHEMA_VERSION,))
+        conn.execute("INSERT INTO schema_version (version) VALUES (?)", (SCHEMA_VERSION,))
         conn.commit()
         return
 
     current = row["version"]
     if current < SCHEMA_VERSION:
-        raise DatabaseError(
-            f"Database schema {current} is older than supported {SCHEMA_VERSION}; "
-            "upgrade path not implemented yet"
-        )
+        _apply_migrations(conn, current, SCHEMA_VERSION)
 
+
+def _apply_migrations(conn: sqlite3.Connection, from_version: int, to_version: int) -> None:
+    """Apply incremental migrations from ``from_version`` up to ``to_version``."""
+    from tadabbur.database.schema import MIGRATIONS
+
+    # Collapse any duplicated schema_version rows into the single highest one.
+    conn.execute(
+        "DELETE FROM schema_version WHERE rowid NOT IN "
+        "(SELECT MAX(rowid) FROM schema_version)"
+    )
+
+    for version in range(from_version, to_version):
+        statements = MIGRATIONS.get(version)
+        if not statements:
+            raise DatabaseError(
+                f"no migration defined for schema version {version} -> {version + 1}"
+            )
+        for statement in statements:
+            conn.execute(statement)
+        conn.execute(
+            "UPDATE schema_version SET version = ? WHERE rowid = "
+            "(SELECT MIN(rowid) FROM schema_version)",
+            (version + 1,),
+        )
+        if conn.total_changes == 0:
+            conn.execute("INSERT INTO schema_version (version) VALUES (?)", (version + 1,))
+    conn.commit()
 
 def open_database(db_path: Path | str) -> sqlite3.Connection:
     """Open a connection and ensure the schema is applied."""

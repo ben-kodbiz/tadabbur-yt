@@ -2,7 +2,15 @@
 
 from __future__ import annotations
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+
+# Migrations from version N -> N+1 (each a list of SQL statements).
+MIGRATIONS: dict[int, list[str]] = {
+    1: [
+        "ALTER TABLE media ADD COLUMN series_key TEXT",
+        "ALTER TABLE media ADD COLUMN session_number INTEGER",
+    ],
+}
 
 SCHEMA_SQL = """
 PRAGMA foreign_keys = ON;
@@ -38,6 +46,8 @@ CREATE TABLE IF NOT EXISTS media (
     published_at         TEXT,
     duration             INTEGER,
     thumbnail_url        TEXT,
+    series_key           TEXT,
+    session_number       INTEGER,
     status               TEXT NOT NULL DEFAULT 'DISCOVERED',
     rights_status        TEXT NOT NULL DEFAULT 'unknown',
     publication_policy   INTEGER NOT NULL DEFAULT 0,

@@ -1,6 +1,15 @@
 """Deterministic archival path layout.
 
-Layout: data/media/<speaker>/<year>/<month>/<source-id>/<VIDEO_ID>/
+Layout (human-friendly, organised by ustaz then series):
+
+    data/media/<ustaz>/
+        <series-or-title>/          # e.g. "Surah Al-An'am" (one folder per series)
+            01 - <title>.m4a
+            02 - <title>.m4a
+        <single-video-title>/
+            audio.m4a
+
+Determined by :func:`tadabbur.metadata.series.series_info`.
 """
 
 from __future__ import annotations
@@ -33,14 +42,22 @@ def slugify(value: str | None) -> str:
     return slug.strip("-") or "unknown"
 
 
-def _year_month(published_at: str | None) -> tuple[str, str]:
-    if published_at:
-        try:
-            dt = datetime.fromisoformat(published_at)
-            return dt.strftime("%Y"), dt.strftime("%m")
-        except ValueError:
-            pass
-    return "unknown", "unknown"
+def media_root(settings: Settings) -> Path:
+    base = settings.storage.resolved_media_dir
+    if not base.is_absolute():
+        base = settings.project_dir / base
+    return base
+
+
+def series_directory(
+    settings: Settings,
+    *,
+    speaker: str | None,
+    series_folder: str,
+) -> Path:
+    """Return the directory for a series/single video under an ustaz folder."""
+    base = media_root(settings)
+    return base / slugify(speaker) / slugify(series_folder)
 
 
 def media_directory(
@@ -50,13 +67,14 @@ def media_directory(
     source_id: str,
     video_id: str,
     published_at: str | None = None,
+    series_folder: str | None = None,
 ) -> Path:
-    """Return the archival directory for a media item, creating nothing."""
-    base = settings.storage.resolved_media_dir
-    if not base.is_absolute():
-        base = settings.project_dir / base
-    year, month = _year_month(published_at)
-    return base / slugify(speaker) / year / month / slugify(source_id) / video_id
+    """Return the archival directory for a media item.
+
+    ``series_folder`` overrides the per-video folder (used for series grouping).
+    """
+    folder = series_folder or f"{video_id}-{source_id}"
+    return series_directory(settings, speaker=speaker, series_folder=folder)
 
 
 def output_template(
@@ -66,10 +84,11 @@ def output_template(
     source_id: str,
     video_id: str,
     published_at: str | None = None,
+    series_folder: str | None = None,
 ) -> str:
     """yt-dlp ``--output`` template that resolves into the archival layout."""
     directory = media_directory(
         settings, speaker=speaker, source_id=source_id, video_id=video_id,
-        published_at=published_at,
+        published_at=published_at, series_folder=series_folder,
     )
     return str(directory / "%(title)s [%(id)s].%(ext)s")

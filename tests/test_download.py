@@ -12,7 +12,7 @@ from tadabbur.database import Repository, open_database
 from tadabbur.downloader import YtDlpError
 from tadabbur.downloader.circuit_breaker import CircuitBreaker
 from tadabbur.downloader.manager import run_download
-from tadabbur.jobs.paths import media_directory
+from tadabbur.jobs.paths import media_directory, series_directory
 
 
 class FakeResult:
@@ -165,7 +165,9 @@ def test_media_directory_layout(settings):
         source_id="ustaz",
         video_id="videoone1234",
         published_at="2026-08-01",
+        series_folder="Surah Al-Kahfi",
     )
-    assert str(d).endswith(
-        "/data/media/channel-one/2026/08/ustaz/videoone1234"
-    )
+    assert str(d).endswith("/data/media/channel-one/surah-al-kahfi")
+
+    s = series_directory(settings, speaker="Channel One", series_folder="Tadabbur Al-Kahfi")
+    assert str(s).endswith("/data/media/channel-one/tadabbur-al-kahfi")
