@@ -68,6 +68,10 @@ def _safe_slug(text: str) -> str:
     return re.sub(r"[^a-z0-9._-]+", "-", text.lower()).strip("-") or "video"
 
 
+class CircuitBreakerOpen(Exception):
+    """Raised when the circuit breaker is in cooldown and blocks requests."""
+
+
 def run_download(
     settings: Settings,
     repo: Repository,
@@ -100,9 +104,16 @@ def run_download(
 
     outcomes: list[DownloadOutcome] = []
     for row in candidates:
-        outcomes.append(
-            _download_one(settings, repo, client, breaker, row, sleep=sleep)
-        )
+        try:
+            outcomes.append(
+                _download_one(settings, repo, client, breaker, row, sleep=sleep)
+            )
+        except CircuitBreakerOpen as exc:
+            # Stop the whole batch: remaining items stay QUEUED for later.
+            logger.warning(
+                "[DOWNLOAD] circuit breaker open, stopping batch: %s", exc
+            )
+            break
     return outcomes
 
 
@@ -197,8 +208,8 @@ def _download_one(
     if not breaker.allow_request():
         msg = "circuit breaker open (cooldown)"
         logger.warning("[DOWNLOAD] video=%s %s", vid, msg)
-        repo.transition_media(media_id, FAILED, error_message=msg)
-        return DownloadOutcome(media_id, vid, FAILED, error=msg)
+        # Leave the item QUEUED (not FAILED) so it can resume after cooldown.
+        raise CircuitBreakerOpen(msg)
 
     repo.transition_media(media_id, DOWNLOADING)
     logger.info(tag("DOWNLOAD", "video=%s attempt started"), vid)

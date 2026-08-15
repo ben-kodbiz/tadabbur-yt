@@ -119,13 +119,14 @@ def test_export_web_data(settings, repo, tmp_path):
 
     lectures = json.loads((result.files["lectures.json"]).read_text(encoding="utf-8"))
     assert lectures[0]["id"] == "videoone1234"
-    assert lectures[0]["speaker"] == "ustaz"
+    # speaker falls back to source name when the title has no ustaz prefix
+    assert lectures[0]["speaker"] == "speaker-Ustaz"
     assert lectures[0]["category"] == "tadabbur"
     assert "surah-al-kahf" in lectures[0]["tags"]
     assert lectures[0]["surah"] == "al-kahf"
 
     speakers = json.loads((result.files["speakers.json"]).read_text(encoding="utf-8"))
-    assert any(s["id"] == "ustaz" for s in speakers)
+    assert any(s["id"] == "speaker-Ustaz" for s in speakers)
 
 
 def test_export_excludes_non_publishable(settings, repo, tmp_path):

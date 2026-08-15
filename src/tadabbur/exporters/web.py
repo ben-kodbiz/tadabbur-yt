@@ -13,6 +13,7 @@ from pathlib import Path
 from tadabbur.config.models import Settings
 from tadabbur.database import Repository
 from tadabbur.logging import stage_logger
+from tadabbur.metadata.series import extract_ustaz
 
 logger = stage_logger("export")
 
@@ -91,11 +92,13 @@ def export_web_data(
         for t in tag_rows:
             tags[t["name"]] = tags.get(t["name"], 0) + 1
 
-        speaker_id = row["source_id"]
+        # Prefer the ustaz name from the title; fall back to the source.
+        ustaz = extract_ustaz(row["title"]) or row["speaker_name"] or row["source_id"]
+        speaker_id = f"speaker-{ustaz}"
         if speaker_id not in speakers:
             speakers[speaker_id] = {
                 "id": speaker_id,
-                "name": row["speaker_name"],
+                "name": ustaz,
                 "platform": row["source_platform"],
                 "channel_url": (lambda r: repo.get_source(r)["channel_url"] if r else None)(row["source_id"]),
             }
