@@ -57,3 +57,60 @@ def test_source_include_rules_extend():
 def test_no_source_fallback():
     c = classify_metadata(title="Tadabbur Al-Mulk 1-5", source=None)
     assert c.category == "tadabbur"
+
+
+def test_source_include_rules_used_in_service(tmp_path):
+    """Channel-specific include/exclude rules from config must apply."""
+    import yaml
+
+    from tadabbur.config import load_settings
+    from tadabbur.database import Repository, open_database
+    from tadabbur.services.classification import classify
+    from tadabbur.status import QUEUED, REJECTED
+
+    cfg = tmp_path / "config.yaml"
+    cfg.write_text(
+        yaml.safe_dump(
+            {
+                "sources": [
+                    {
+                        "id": "ustaz",
+                        "name": "Ustaz",
+                        "channel_url": "https://youtube.com/@x",
+                        "enabled": True,
+                        "rules": {"include": ["kuliah", "siri"], "exclude": ["cuaca"]},
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    settings = load_settings(config_file=cfg)
+    conn = open_database(settings.storage.database_path)
+    repo = Repository(conn)
+    repo.upsert_source(source_id="ustaz", name="Ustaz", channel_url="https://youtube.com/@x")
+
+    repo.insert_media(
+        source_id="ustaz", external_id="v1", url="https://youtu.be/v1",
+        title="SIRI 3: KULIAH TAFSIR", status="DISCOVERED",
+    )
+    repo.insert_media(
+        source_id="ustaz", external_id="v2", url="https://youtu.be/v2",
+        title="Tadabbur Al-Kahfi", status="DISCOVERED",
+    )
+    repo.insert_media(
+        source_id="ustaz", external_id="v3", url="https://youtu.be/v3",
+        title="Ramalan cuaca hari ini", status="DISCOVERED",
+    )
+
+    classify(repo, settings)
+
+    by_id = {r["external_id"]: r["status"] for r in
+             repo._conn.execute("SELECT * FROM media").fetchall()}
+    # v1 matches configured include keywords -> accepted
+    assert by_id["v1"] == QUEUED
+    # v3 matches configured exclude keyword -> rejected
+    assert by_id["v3"] == REJECTED
+    # v2 matches only global keyword (tadabbur) -> accepted
+    assert by_id["v2"] == QUEUED
+    conn.close()

@@ -12,14 +12,15 @@ from tadabbur.status import MANUAL_REVIEW, QUEUED, REJECTED
 logger = stage_logger("classify")
 
 
-def _source_from_row(row) -> Source | None:
-    """Convert a sources sqlite row into a config Source model (rules incl.)."""
+def _source_from_row(row, settings: Settings | None = None) -> Source | None:
+    """Convert a sources sqlite row into a config Source model.
+
+    When ``settings`` is provided, the per-source classification rules from
+    the YAML config are merged in (the DB stores only scalar source fields).
+    """
     if row is None:
         return None
-    rules_row = None
-    # Rules live in config, not the DB; build an empty Source so default
-    # keyword rules apply.
-    return Source(
+    source = Source(
         id=row["id"],
         name=row["name"],
         platform=row["platform"],
@@ -31,6 +32,11 @@ def _source_from_row(row) -> Source | None:
         download_policy=bool(row["download_policy"]),
         publication_policy=bool(row["publication_policy"]),
     )
+    if settings is not None:
+        configured = next((s for s in settings.sources if s.id == row["id"]), None)
+        if configured is not None:
+            source.rules = configured.rules
+    return source
 
 
 def run_classification(settings: Settings) -> str:
@@ -53,7 +59,7 @@ def classify(repository: Repository, settings: Settings) -> str:
     threshold = settings.classification.confidence_threshold
 
     for row in media_rows:
-        source = _source_from_row(repo.get_source(row["source_id"]))
+        source = _source_from_row(repo.get_source(row["source_id"]), settings)
         classification = classify_metadata(
             title=row["title"],
             description=row["description"],
