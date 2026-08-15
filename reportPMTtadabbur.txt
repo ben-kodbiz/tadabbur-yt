@@ -1,0 +1,776 @@
+==============================================================================
+REPORT DISCOVERY PROmediaTAJDID - TAFSIR / TADABBUR / SIRAH
+==============================================================================
+Sumber     : https://www.youtube.com/@PROmediaTAJDIDofficial/videos
+Saluran    : PROmediaTAJDID
+Video diimbas: 3300 (berhenti pada 100 siri)
+Bilangan siri dijumpai : 95
+Pecahan    : Tafsir=42  Tadabbur=46  Sirah=7
+Kriteria   : tajuk mengandungi kata kunci + tempoh > 30 minit + bukan playlist
+Nota       : siri berbilang sesi (cth: Surah X Sesi 1-90) dikira sebagai SATU siri
+
+  #  USTAZ                  SIRI                                               JENIS     SESI   TEMPOH
+------------------------------------------------------------------------------
+  1  Rizal Azizan           Hikmah & Rahsia Disebalik Peristiwa Dalam Sirah Na sirah        1      44m
+  2  Qarni Edrus            Mukhtasar As-Soghir Fi Sirah Al-Basyir             sirah        6      48m
+  3  Rizal Azizan           Sirah Nabi                                         sirah        1   1j 09m
+  4  Qarni Edrus            Mukhtasar As-Soghir Fi Sirah Al-Basyir             sirah        1      53m
+  5  Qarni Edrus            Mukhtasar As-Soghir Fi Sirah Al-Basyir.            sirah        2      47m
+  6  Abdul Basit            Murajaah Tahzib Sirah- Peristiwa 10 Tahun Nabi S.A sirah        1   1j 04m
+  7  Abdul Basit            Sirah Yang Sahih Di Bumi Madinah                   sirah        1   1j 50m
+  8  Rizal Azizan           Tadabbur Surah Al-Mulk                             tadabbur     1   1j 03m
+  9  Qarni Edrus            40 Ayat Tadabbur Kewangan Islam & Bisnes Patuh Sya tadabbur     5      55m
+ 10  (nama ustaz tidak jelas) Syeikh Soleh Abdul Naser - Tadabbur Al-Quran Siri- tadabbur     1   1j 20m
+ 11  Rizal Azizan           Tadabbur Ayat-Ayat Syurga                          tadabbur     1      55m
+ 12  Rizal Azizan           Tadabbur Surah Al-Baqarah Ayat 187                 tadabbur     1      40m
+ 13  Qarni Edrus            40 Ayat Tadabbur Kewangan Islam & Bisnes Patuh Sya tadabbur     1      46m
+ 14  Qarni Edrus            40 Ayat Tadabbur Kewangan Islam & Bisnes Patuh Sya tadabbur     1      50m
+ 15  (nama ustaz tidak jelas) Syeikh Soleh Abdul Nasir - Tadabbur Al-Quran Siri- tadabbur     1   1j 12m
+ 16  Qarni Edrus            40 Ayat Tadabbur Kewangan Islam                    tadabbur     4      58m
+ 17  Rizal Azizan           Tadabbur Surah Al-Jin                              tadabbur     1   1j 06m
+ 18  Rizal Azizan           Tadabbur Surah Al-Kauthar                          tadabbur     1      37m
+ 19  Rizal Azizan           Tadabbur Surah Al-Falaq                            tadabbur     1      43m
+ 20  Rizal Azizan           Tadabbur Surah Al-Qalam                            tadabbur     1      46m
+ 21  Qarni Edrus            40 Ayat Tadabbur Kewangan Islam & Bisnes Patuh Sya tadabbur     1      51m
+ 22  Nasrullah Noh          Tadabbur Surah Al-Insan                            tadabbur     1      54m
+ 23  Ahmad Hasyimi          Tadabbur Surah Ali-Imran Siri Ke-14                tadabbur    71   1j 16m
+ 24  Dato Dr MAZA           SS. Prof Dato Dr MAZA : Tadabbur Surah Al-alaq     tadabbur     1      32m
+ 25  Ahmad Hasyimi          Tadabbur Surah Al-Ma'idah Siri Pertama             tadabbur     1   1j 01m
+ 26  Ahmad Hasyimi          Tadabbur Surah Al-An'am Siri Ke-35                 tadabbur    53   1j 17m
+ 27  Ahmad Hasyimi          Tadabbur Surah Ali-Imran Siri Pertama              tadabbur     1      42m
+ 28  Sholihah Kaswari       Tadabbur Surah At-Tahrim                           tadabbur     1   2j 11m
+ 29  Ahmad Hasyimi          Tadabbur Surah Al-Ma'idah Siri Ke-45 (Terakhir)    tadabbur     1      57m
+ 30  Ahmad Hasyimi          Tadabbur Surah Al-Ma'idah Siri Ke-4                tadabbur    44   1j 12m
+ 31  Fadzil                 Tadabbur Surah Ar-Rahman Ayat Pertama              tadabbur     1   1j 06m
+ 32  Abdul Basit            Dato' Dr. Abdul Basit : 60 Persoalan Mengenai Tada tadabbur     1      35m
+ 33  Abdul Basit            Dato' Dr. Abdul Basit : Motivasi Tadabbur Al-Quran tadabbur     1      58m
+ 34  Ahmad Hasyimi          Tadabbur Surah An-Nisa' Siri Pertama               tadabbur     1   1j 00m
+ 35  Fadzil                 Tadabbur Surah Ar-Rahman                           tadabbur     4   1j 12m
+ 36  Abdul Basit            Dato' Dr. Abdul Basit :Tadabbur Al-Quran Surah Al- tadabbur     1      41m
+ 37  Abdul Basit Abdul Rahman Dato' Dr Abdul Basit Abdul Rahman: Tadabbur Ayat A tadabbur     1      36m
+ 38  Ahmad Hasyimi          Tadabbur Surah Ali-Imran Siri-28                   tadabbur     1      49m
+ 39  Ahmad Hasyimi          Tadabbur Surah Al-An'am Siri Pertama               tadabbur     1   1j 06m
+ 40  Ahmad Hasyimi          Tadabbur Surah Al-Insan Siri Ke-7                  tadabbur     3   1j 02m
+ 41  Halim Hassan           Tadabbur Ayat² Awal Surah Al-Baqarah.              tadabbur     1   1j 00m
+ 42  Ahmad Hasyimi          Tadabbur Suarah Al-An'am Siri Ke-55                tadabbur     1   1j 03m
+ 43  Ahmad Hasyimi          Tadabbur Surah An-Nisa' Siri Ke-67                 tadabbur    83   1j 22m
+ 44  Abdul Basit            Dato' Dr. Abdul Basit : Tadabbur Al-Quran Berkaita tadabbur     1      43m
+ 45  Qarni Edrus            30 Teknik Tepat Tadabbur Al-Quran (Siri 18)        tadabbur     6   1j 05m
+ 46  Ahmad Hasyimi          Tadabbur Surah An-Nisa' Siri Ke-81                 tadabbur     2      59m
+ 47  Fadzil                 Tadabbur Surah Ar-Rahman Siri Ke-3                 tadabbur     2   1j 16m
+ 48  Qarni Edrus            30 Teknik Tepat Tadabbur Al-Quran                  tadabbur     4      50m
+ 49  Radhi Abu Bakar        Tadabbur Ayat Qursi                                tadabbur     1      57m
+ 50  Abu Syu'aib            Tadabbur Surah Al-Hadid Ayat 17                    tadabbur     1      36m
+ 51  Dato' Dr MAZA          SS Prof Dato' Dr MAZA: Tadabbur Surah Al-Takathur  tadabbur     1      31m
+ 52  Abdul Basit Abdul Rahman Dato’ Dr. Abdul Basit Abdul Rahman: Tadabbur Surah tadabbur     2      53m
+ 53  Ahmad Hasyimi          Tadabbur Surah An-Nisa' Siri Ke-87 (Terakhir)      tadabbur     1   1j 08m
+ 54  Qarni Edrus            Tafsir Surah Hawamim                               tafsir       1      58m
+ 55  Abdul Kadir Sahak      Tafsir Al-Azhar - Buya Hamka (m/s 364)             tafsir       1   1j 01m
+ 56  Abdul Kadir Sahak      Tafsir Al-Azhar (m/s 347, Ayat 113 Al-Baqarah)     tafsir       1   1j 08m
+ 57  Abdul Kadir Sahak      Tafsir Al-Azhar - Buya Hamka (m/s 351)             tafsir       1   1j 08m
+ 58  Qarni Edrus            Tafsir Surah Az-Zukhruf                            tafsir       2      51m
+ 59  Abdul Kadir Sahak      Tafsir Buya Hamka  Juz 1, m/s 384                  tafsir       1   1j 00m
+ 60  Rizal Azizan           Tafsir Surah Al-Kahfi                              tafsir       1      47m
+ 61  Fadzil                 Tafsir Juzuk 29 | Surah Al-Muzzammil Ayat 17       tafsir       1   1j 04m
+ 62  Fadzil                 Tafsir Juzuk 29 | Surah Jin Ayat 8                 tafsir       3   1j 02m
+ 63  Fadzil                 Tafsir Juzuk 29 | Surah Muddaththir Ayat 11        tafsir       1      56m
+ 64  Qarni Edrus            Tafsir Surah Hawamim - Surah al-Syura Ayat 51 (ms: tafsir       1      37m
+ 65  (nama ustaz tidak jelas) Usatz Fadzil : Tafsir Juzuk 29 | Surah Nuh         tafsir       1      58m
+ 66  Qarni Edrus            Tafsir Surah As-Syura (Ayat 35)                    tafsir       1      44m
+ 67  Fadzil                 Tafsir Juzuk 29 | Surah Ma'arij                    tafsir       1      59m
+ 68  Fadzil                 Tafsir Juzuk 29 | Surah Nuh                        tafsir       8   1j 05m
+ 69  Qarni Edrus            Tafsir Surah Az-Zukhruf                            tafsir       5      49m
+ 70  Ahmad Jailani Abd Ghani Tafsir Surah Al Mutaffifin                         tafsir       1      46m
+ 71  Fadzil                 Tafsir Juzuk 29 | Surah Jin                        tafsir       7   1j 08m
+ 72  Adli                   Tafsir Surah Qaf                                   tafsir       1   1j 11m
+ 73  Fadzil                 Tafsir Juzuk 29 | Surah                            tafsir       1      54m
+ 74  Fadzil                 Tafsir Juzuk 29                                    tafsir       3   1j 03m
+ 75  Fadzil                 Tafsir Juzuk 29 | Surah Al-Mulk                    tafsir      12   1j 02m
+ 76  Qarni Edrus            Tafsir Surah As-Syura (Ayat 32, m/s 487)           tafsir       1      55m
+ 77  Dato' Haji Shamsuri Haji Ahmad Tafsir Surah Al-Jinn { ٱلۡجِنِّ } Ayat 13-17       tafsir       1   1j 38m
+ 78  Fadzil                 Tafsir Juzuk 29| Surah Al-Qalam                    tafsir       1      51m
+ 79  Fadzli                 Tafsir Juzuk 29 | Surah Ma'arij                    tafsir       1   1j 00m
+ 80  Fadzil                 Tafsir Juzuk 28 | Surah At-Tahrim                  tafsir       7      59m
+ 81  Fadzil Kamaruddin      Tafsir Juzuk 29                                    tafsir       2      54m
+ 82  Fadzil                 Tafsir Juzuk 29 | Surah Al-Qalam                   tafsir       9   1j 02m
+ 83  Fadzil                 Tafsir Juzuk 29 | Surah Al-Ma' arij                tafsir       1      57m
+ 84  (nama ustaz tidak jelas) Datuk Abdul Rasyid Idris: Tafsir Surah 'Abasa, Aya tafsir       1      36m
+ 85  Fadzil                 Tafsir Juzuk 29 & Isu RUU                          tafsir       1   1j 03m
+ 86  Fadzil                 Tafsir Juzuk 29 | Surah Al-Muzzammil               tafsir       1      52m
+ 87  Qarni Edrus            Tafsir Surah As-Syura                              tafsir       1      56m
+ 88  Dato Dr MAZA           SS Prof Dato Dr MAZA : Isra'iliyyat I Tafsir - Ins tafsir       1      45m
+ 89  Fadzil                 Tafsir Juzuk 29 | Surah Al-Haqqah                  tafsir       2   1j 01m
+ 90  Nassar Bin Muhammad Al Sheikh Dr. Nassar Bin Muhammad Al-Harithi - Tafsir tafsir       2      39m
+ 91  Fadzil                 Tafsir Juzuk 29 | Surah Al-Ma'arij                 tafsir       6   1j 03m
+ 92  (nama ustaz tidak jelas) YBrs Datuk Abdul Rasyid Idris: Tafsir Surah 'Abasa tafsir       1      54m
+ 93  Abdul Kadir Sahak      Tafsir Al-Azhar - Buya Hamka                       tafsir       1      46m
+ 94  Fadzil                 Tafsir Juzuk 29 |                                  tafsir       2      59m
+ 95  Ahmad Jailani Abd Ghani Tafsir Juzuk Amma                                  tafsir       1      59m
+
+------------------------------------------------------------------------------
+DETAIL SIRI (URL video terpanjang / wakil):
+------------------------------------------------------------------------------
+  1. (4K) 03-05-2026 Ustaz Rizal Azizan : Hikmah & Rahsia Disebalik Peristiwa Dalam Sirah Nabi SAW
+      Ustaz  : Rizal Azizan
+      Jenis  : sirah
+      Sesi   : 1
+      Tempoh : 44m
+      URL    : https://www.youtube.com/watch?v=MPN5MyZazZw
+
+  2. (4K) 25-11-2024 Ustaz Qarni Edrus : Mukhtasar As-Soghir Fi Sirah Al-Basyir
+      Ustaz  : Qarni Edrus
+      Jenis  : sirah
+      Sesi   : 6
+      Tempoh : 48m
+      URL    : https://www.youtube.com/watch?v=uC7pWJtAv2A
+
+  3. (4K) 28-07-2025 Ustaz Rizal Azizan : Sirah Nabi
+      Ustaz  : Rizal Azizan
+      Jenis  : sirah
+      Sesi   : 1
+      Tempoh : 1j 09m
+      URL    : https://www.youtube.com/watch?v=iNrb5WdhOOE
+
+  4. (FHD) 11-12-2024 Ustaz Qarni Edrus | Mukhtasar As-Soghir Fi Sirah Al-Basyir
+      Ustaz  : Qarni Edrus
+      Jenis  : sirah
+      Sesi   : 1
+      Tempoh : 53m
+      URL    : https://www.youtube.com/watch?v=-7H86nwA044
+
+  5. 10-06-2024 Ustaz Qarni Edrus : Mukhtasar As-Soghir Fi Sirah Al-Basyir.
+      Ustaz  : Qarni Edrus
+      Jenis  : sirah
+      Sesi   : 2
+      Tempoh : 47m
+      URL    : https://www.youtube.com/watch?v=bUkqMiECxp0
+
+  6. 14-09-2024 Dr. Abdul Basit : Murajaah Tahzib Sirah- Peristiwa 10 Tahun Nabi S.A.W Di Madinah
+      Ustaz  : Abdul Basit
+      Jenis  : sirah
+      Sesi   : 1
+      Tempoh : 1j 04m
+      URL    : https://www.youtube.com/watch?v=c-qOQNTC6A8
+
+  7. 14-09-2024 Dr. Abdul Basit : Sirah Yang Sahih Di Bumi Madinah
+      Ustaz  : Abdul Basit
+      Jenis  : sirah
+      Sesi   : 1
+      Tempoh : 1j 50m
+      URL    : https://www.youtube.com/watch?v=v_4SA-LimNs
+
+  8. (4K) 02-03-2025 Ustaz Rizal Azizan - Tadabbur Surah Al-Mulk
+      Ustaz  : Rizal Azizan
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 03m
+      URL    : https://www.youtube.com/watch?v=7sM__qFTSfg
+
+  9. (4K) 03-01-2025 Ustaz Qarni Edrus - 40 Ayat Tadabbur Kewangan Islam & Bisnes Patuh Syariah
+      Ustaz  : Qarni Edrus
+      Jenis  : tadabbur
+      Sesi   : 5
+      Tempoh : 55m
+      URL    : https://www.youtube.com/watch?v=ABapJiokmcU
+
+ 10. (4K) 03-07-2024 Syeikh Soleh Abdul Naser - Tadabbur Al-Quran Siri-35
+      Ustaz  : (nama ustaz tidak jelas)
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 20m
+      URL    : https://www.youtube.com/watch?v=ADaSdCOECpo
+
+ 11. (4K) 07-12-2025 Ustaz Rizal Azizan : Tadabbur Ayat-Ayat Syurga
+      Ustaz  : Rizal Azizan
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 55m
+      URL    : https://www.youtube.com/watch?v=yetA_hoETlM
+
+ 12. (4K) 08-03-2025 Ustaz Rizal Azizan : Tadabbur Surah Al-Baqarah Ayat 187
+      Ustaz  : Rizal Azizan
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 40m
+      URL    : https://www.youtube.com/watch?v=3OZL9YdyIzk
+
+ 13. (4K) 08-11-2024 Ustaz Qarni Edrus: 40 Ayat Tadabbur Kewangan Islam & Bisnes Patuh Syariah Semasa
+      Ustaz  : Qarni Edrus
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 46m
+      URL    : https://www.youtube.com/watch?v=iuNYBBU5GHc
+
+ 14. (4K) 09-01-2026 Ustaz Qarni Edrus : 40 Ayat Tadabbur Kewangan Islam & Bisnes Patuh Syariah
+      Ustaz  : Qarni Edrus
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 50m
+      URL    : https://www.youtube.com/watch?v=wB_5AkMtxX8
+
+ 15. (4K) 10-07-2024 Syeikh Soleh Abdul Nasir - Tadabbur Al-Quran Siri-36
+      Ustaz  : (nama ustaz tidak jelas)
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 12m
+      URL    : https://www.youtube.com/watch?v=xoNJtdqFITA
+
+ 16. (4K) 13-06-2025 Ustaz Qarni Edrus - 40 Ayat Tadabbur Kewangan Islam
+      Ustaz  : Qarni Edrus
+      Jenis  : tadabbur
+      Sesi   : 4
+      Tempoh : 58m
+      URL    : https://www.youtube.com/watch?v=3YOUu5O0AJI
+
+ 17. (4K) 18-01-2025 Ustaz Rizal Azizan : Tadabbur Surah Al-Jin
+      Ustaz  : Rizal Azizan
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 06m
+      URL    : https://www.youtube.com/watch?v=04VFkh-qGaw
+
+ 18. (4K) 20-01-2025 Ustaz Rizal Azizan : Tadabbur Surah Al-Kauthar
+      Ustaz  : Rizal Azizan
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 37m
+      URL    : https://www.youtube.com/watch?v=MOFGyG9frgQ
+
+ 19. (4K) 21-01-2025 Ustaz Rizal Azizan : Tadabbur Surah Al-Falaq
+      Ustaz  : Rizal Azizan
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 43m
+      URL    : https://www.youtube.com/watch?v=PRZxVYsONXA
+
+ 20. (4K) 24-01-2025 Ustaz Rizal Azizan : Tadabbur Surah Al-Qalam
+      Ustaz  : Rizal Azizan
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 46m
+      URL    : https://www.youtube.com/watch?v=6SonhEnDSto
+
+ 21. (4K) 27-06-2025 Ustaz Qarni Edrus : 40 Ayat Tadabbur Kewangan Islam & Bisnes Patuh Syariah Semasa
+      Ustaz  : Qarni Edrus
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 51m
+      URL    : https://www.youtube.com/watch?v=jbFgpbPEniY
+
+ 22. (4K) 27-07-2025 Ustaz Nasrullah Noh : Tadabbur Surah Al-Insan
+      Ustaz  : Nasrullah Noh
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 54m
+      URL    : https://www.youtube.com/watch?v=Ly4g8ZuuNso
+
+ 23. 01-04-2024 Ustaz Ahmad Hasyimi : Tadabbur Surah Ali-Imran Siri Ke-14
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 71
+      Tempoh : 1j 16m
+      URL    : https://www.youtube.com/watch?v=A1B00EhrqPc
+
+ 24. 02-04-2024 SS. Prof Dato Dr MAZA : Tadabbur Surah Al-alaq
+      Ustaz  : Dato Dr MAZA
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 32m
+      URL    : https://www.youtube.com/watch?v=1iGeck0COQo
+
+ 25. 04-08-2025 Ustaz Ahmad Hasyimi : Tadabbur Surah Al-Ma'idah Siri Pertama
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 01m
+      URL    : https://www.youtube.com/watch?v=OJNhOr4mRNc
+
+ 26. 05-03-2026  Ustaz Ahmad Hasyimi : Tadabbur Surah Al-An'am Siri Ke-35
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 53
+      Tempoh : 1j 17m
+      URL    : https://www.youtube.com/watch?v=iSBF_jwXyq8
+
+ 27. 06-03-2024 Ustaz Ahmad Hasyimi : Tadabbur Surah Ali-Imran Siri Pertama
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 42m
+      URL    : https://www.youtube.com/watch?v=9OlWwoYQzCE
+
+ 28. 06-07-2025 Dr. Sholihah Kaswari : Tadabbur Surah At-Tahrim
+      Ustaz  : Sholihah Kaswari
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 2j 11m
+      URL    : https://www.youtube.com/watch?v=CUPJQQUKfvE
+
+ 29. 06-11-2025 Ustaz Ahmad Hasyimi : Tadabbur Surah Al-Ma'idah Siri Ke-45 (Terakhir)
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 57m
+      URL    : https://www.youtube.com/watch?v=hTi17EPgp9g
+
+ 30. 07-08-2025 Ustaz Ahmad Hasyimi : Tadabbur Surah Al-Ma'idah Siri Ke-4
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 44
+      Tempoh : 1j 12m
+      URL    : https://www.youtube.com/watch?v=g_bbTBXNdds
+
+ 31. 08-08-2025 Ustaz Fadzil : Tadabbur Surah Ar-Rahman Ayat Pertama
+      Ustaz  : Fadzil
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 06m
+      URL    : https://www.youtube.com/watch?v=aB8VcTHICDI
+
+ 32. 09-08-2025 Dato' Dr. Abdul Basit : 60 Persoalan Mengenai Tadabbur | Surah Al-A'raf Ayat 199
+      Ustaz  : Abdul Basit
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 35m
+      URL    : https://www.youtube.com/watch?v=WnWXleC5_5c
+
+ 33. 09-08-2025 Dato' Dr. Abdul Basit : Motivasi Tadabbur Al-Quran Dalam Kehidupan
+      Ustaz  : Abdul Basit
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 58m
+      URL    : https://www.youtube.com/watch?v=7Lg5GqQOX5w
+
+ 34. 09-10-2024 Ustaz Ahmad Hasyimi : Tadabbur Surah An-Nisa' Siri Pertama
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 00m
+      URL    : https://www.youtube.com/watch?v=ev8ozxiEIQo
+
+ 35. 10-10-2025 Ustaz Fadzil : Tadabbur Surah Ar-Rahman
+      Ustaz  : Fadzil
+      Jenis  : tadabbur
+      Sesi   : 4
+      Tempoh : 1j 12m
+      URL    : https://www.youtube.com/watch?v=2hYpt2NyjCc
+
+ 36. 11-01-2025 Dato' Dr. Abdul Basit :Tadabbur Al-Quran Surah Al-Ma'idah Ayat 2
+      Ustaz  : Abdul Basit
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 41m
+      URL    : https://www.youtube.com/watch?v=k9prxNU1Hsw
+
+ 37. 11-05-2024 Dato' Dr Abdul Basit Abdul Rahman: Tadabbur Ayat Al-Quran Berkaitan Alam.
+      Ustaz  : Abdul Basit Abdul Rahman
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 36m
+      URL    : https://www.youtube.com/watch?v=bS3j4LmSJaU
+
+ 38. 11-07-2024 Ustaz Ahmad Hasyimi : Tadabbur Surah Ali-Imran Siri-28
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 49m
+      URL    : https://www.youtube.com/watch?v=xs0GUS76Yss
+
+ 39. 12-11-2025 Ustaz Ahmad Hasyimi : Tadabbur Surah Al-An'am Siri Pertama
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 06m
+      URL    : https://www.youtube.com/watch?v=qpVva6LYV-g
+
+ 40. 15-02-2024 Ustaz Ahmad Hasyimi : Tadabbur Surah Al-Insan Siri Ke-7
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 3
+      Tempoh : 1j 02m
+      URL    : https://www.youtube.com/watch?v=hjvbtqTjUs0
+
+ 41. 15-08-2025 Ustaz Halim Hassan: Tadabbur Ayat² Awal Surah Al-Baqarah.
+      Ustaz  : Halim Hassan
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 00m
+      URL    : https://www.youtube.com/watch?v=b35pJVipX-I
+
+ 42. 19-05-2026 Ustaz Ahmad Hasyimi : Tadabbur Suarah Al-An'am Siri Ke-55
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 03m
+      URL    : https://www.youtube.com/watch?v=IDpD7LTibjw
+
+ 43. 20-05-2025 Ustaz Ahmad Hasyimi : Tadabbur Surah An-Nisa' Siri Ke-67
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 83
+      Tempoh : 1j 22m
+      URL    : https://www.youtube.com/watch?v=PgRJ-gr-H2U
+
+ 44. 20-07-2025 Dato' Dr. Abdul Basit : Tadabbur Al-Quran Berkaitan Hijrah Rasulullah ﷺ
+      Ustaz  : Abdul Basit
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 43m
+      URL    : https://www.youtube.com/watch?v=c0gRVUvy_xo
+
+ 45. 20-10-2024 Ustaz Qarni Edrus: 30 Teknik Tepat Tadabbur Al-Quran (Siri 18)
+      Ustaz  : Qarni Edrus
+      Jenis  : tadabbur
+      Sesi   : 6
+      Tempoh : 1j 05m
+      URL    : https://www.youtube.com/watch?v=e-6UXCgQCGA
+
+ 46. 22-07-2025 Ustaz Ahmad Hasyimi: Tadabbur Surah An-Nisa' Siri Ke-81
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 2
+      Tempoh : 59m
+      URL    : https://www.youtube.com/watch?v=Xhv24R1XG7E
+
+ 47. 22-08-2025 Ustaz Fadzil : Tadabbur Surah Ar-Rahman Siri Ke-3
+      Ustaz  : Fadzil
+      Jenis  : tadabbur
+      Sesi   : 2
+      Tempoh : 1j 16m
+      URL    : https://www.youtube.com/watch?v=2ZRV0VW1bg4
+
+ 48. 23-06-2024 Ustaz Qarni Edrus : 30 Teknik Tepat Tadabbur Al-Quran
+      Ustaz  : Qarni Edrus
+      Jenis  : tadabbur
+      Sesi   : 4
+      Tempoh : 50m
+      URL    : https://www.youtube.com/watch?v=mvtIhfs5U0M
+
+ 49. 24-07-2026 Ustaz Radhi Abu Bakar: Tadabbur Ayat Qursi
+      Ustaz  : Radhi Abu Bakar
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 57m
+      URL    : https://www.youtube.com/watch?v=0kBZv9a9Kn8
+
+ 50. 25-03-2024 Ustaz Abu Syu'aib : Tadabbur Surah Al-Hadid Ayat 17
+      Ustaz  : Abu Syu'aib
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 36m
+      URL    : https://www.youtube.com/watch?v=zAYTClDpI-o
+
+ 51. 26-03-2024 SS Prof Dato' Dr MAZA: Tadabbur Surah Al-Takathur
+      Ustaz  : Dato' Dr MAZA
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 31m
+      URL    : https://www.youtube.com/watch?v=LV8IBhnDx_M
+
+ 52. 26-07-2024 Dato’ Dr. Abdul Basit Abdul Rahman: Tadabbur Surah Ali Imran (Siri 42)
+      Ustaz  : Abdul Basit Abdul Rahman
+      Jenis  : tadabbur
+      Sesi   : 2
+      Tempoh : 53m
+      URL    : https://www.youtube.com/watch?v=fQW3UM1k058
+
+ 53. 31-07-2025 Ustaz Ahmad Hasyimi : Tadabbur Surah An-Nisa' Siri Ke-87 (Terakhir)
+      Ustaz  : Ahmad Hasyimi
+      Jenis  : tadabbur
+      Sesi   : 1
+      Tempoh : 1j 08m
+      URL    : https://www.youtube.com/watch?v=W0kl-NoYURo
+
+ 54. (4K) 10-01-2025 Ustaz Qarni Edrus : Tafsir Surah Hawamim
+      Ustaz  : Qarni Edrus
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 58m
+      URL    : https://www.youtube.com/watch?v=6pvcPfGaqbo
+
+ 55. (4K) 11-08-2024 Ustaz Abdul Kadir Sahak - Tafsir Al-Azhar - Buya Hamka (m/s 364)
+      Ustaz  : Abdul Kadir Sahak
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 1j 01m
+      URL    : https://www.youtube.com/watch?v=n1llSIFRUw8
+
+ 56. (4K) 14-07-2024 Ustaz Abdul Kadir Sahak - Tafsir Al-Azhar (m/s 347, Ayat 113 Al-Baqarah)
+      Ustaz  : Abdul Kadir Sahak
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 1j 08m
+      URL    : https://www.youtube.com/watch?v=t5OkgvDwH_8
+
+ 57. (4K) 21-07-2024 Ustaz Abdul Kadir Sahak - Tafsir Al-Azhar - Buya Hamka (m/s 351)
+      Ustaz  : Abdul Kadir Sahak
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 1j 08m
+      URL    : https://www.youtube.com/watch?v=eG6F6tgoG_s
+
+ 58. (4K) 23-08-2024 Ustaz Qarni Edrus : Tafsir Surah Az-Zukhruf
+      Ustaz  : Qarni Edrus
+      Jenis  : tafsir
+      Sesi   : 2
+      Tempoh : 51m
+      URL    : https://www.youtube.com/watch?v=cf7Ad7pUdKI
+
+ 59. (4K) 24-11-2024 Ustaz Abdul Kadir Sahak - Tafsir Buya Hamka  Juz 1, m/s 384
+      Ustaz  : Abdul Kadir Sahak
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 1j 00m
+      URL    : https://www.youtube.com/watch?v=GN_Tmyp4atk
+
+ 60. (4K) 25-09-2025 Ustaz Rizal Azizan - Tafsir Surah Al-Kahfi
+      Ustaz  : Rizal Azizan
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 47m
+      URL    : https://www.youtube.com/watch?v=B7g4BapSI8M
+
+ 61. 01-05-2024 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Al-Muzzammil Ayat 17
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 1j 04m
+      URL    : https://www.youtube.com/watch?v=HrJi7Gz4MR4
+
+ 62. 05-06-2024 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Jin Ayat 8
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 3
+      Tempoh : 1j 02m
+      URL    : https://www.youtube.com/watch?v=b_3QnxIhcxs
+
+ 63. 07-02-2024 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Muddaththir Ayat 11
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 56m
+      URL    : https://www.youtube.com/watch?v=_pxiJn0eTOU
+
+ 64. 07-06-2024 Ustaz Qarni Edrus : Tafsir Surah Hawamim - Surah al-Syura Ayat 51 (ms: 488)
+      Ustaz  : Qarni Edrus
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 37m
+      URL    : https://www.youtube.com/watch?v=ys14nau3qPY
+
+ 65. 09-10-2024 Usatz Fadzil : Tafsir Juzuk 29 | Surah Nuh
+      Ustaz  : (nama ustaz tidak jelas)
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 58m
+      URL    : https://www.youtube.com/watch?v=9GaWppxr46w
+
+ 66. 10-05-2024 Ustaz Qarni Edrus - Tafsir Surah As-Syura (Ayat 35)
+      Ustaz  : Qarni Edrus
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 44m
+      URL    : https://www.youtube.com/watch?v=j9X1csqJbWg
+
+ 67. 11-12-2024 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Ma'arij
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 59m
+      URL    : https://www.youtube.com/watch?v=8Lz6aKu6Jbc
+
+ 68. 13-11-2024 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Nuh
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 8
+      Tempoh : 1j 05m
+      URL    : https://www.youtube.com/watch?v=r3Cn4gp4kmc
+
+ 69. 14-06-2024 Ustaz Qarni Edrus : Tafsir Surah Az-Zukhruf
+      Ustaz  : Qarni Edrus
+      Jenis  : tafsir
+      Sesi   : 5
+      Tempoh : 49m
+      URL    : https://www.youtube.com/watch?v=F0gOxGZe_Ho
+
+ 70. 15-04-2026 Ustaz Ahmad Jailani Abd Ghani: Tafsir Surah Al Mutaffifin
+      Ustaz  : Ahmad Jailani Abd Ghani
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 46m
+      URL    : https://www.youtube.com/watch?v=9XilcKk3F0Y
+
+ 71. 15-05-2024 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Jin
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 7
+      Tempoh : 1j 08m
+      URL    : https://www.youtube.com/watch?v=q5EArMv9XBU
+
+ 72. 15-06-2025 Ustaz Adli : Tafsir Surah Qaf
+      Ustaz  : Adli
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 1j 11m
+      URL    : https://www.youtube.com/watch?v=iwycOzVGmBA
+
+ 73. 16-04-2025 Ustaz Fadzil : Tafsir Juzuk 29 | Surah
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 54m
+      URL    : https://www.youtube.com/watch?v=HjLZRIL7fuM
+
+ 74. 17-04-2024 Ustaz Fadzil : Tafsir Juzuk 29
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 3
+      Tempoh : 1j 03m
+      URL    : https://www.youtube.com/watch?v=-0dsSBgfh7o
+
+ 75. 17-09-2025 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Al-Mulk
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 12
+      Tempoh : 1j 02m
+      URL    : https://www.youtube.com/watch?v=Wt9RNP8Crkg
+
+ 76. 19-04-2024 Ustaz Qarni Edrus - Tafsir Surah As-Syura (Ayat 32, m/s 487)
+      Ustaz  : Qarni Edrus
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 55m
+      URL    : https://www.youtube.com/watch?v=JEGp3i0fFoU
+
+ 77. 19-08-2024 Ustaz Dato' Haji Shamsuri Haji Ahmad: Tafsir Surah Al-Jinn { ٱلۡجِنِّ } Ayat 13-17
+      Ustaz  : Dato' Haji Shamsuri Haji Ahmad
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 1j 38m
+      URL    : https://www.youtube.com/watch?v=94aMy308C5o
+
+ 78. 20-08-2025 Ustaz Fadzil : Tafsir Juzuk 29| Surah Al-Qalam
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 51m
+      URL    : https://www.youtube.com/watch?v=XV839NjJA48
+
+ 79. 20-11-2024 Ustaz Fadzli : Tafsir Juzuk 29 | Surah Ma'arij
+      Ustaz  : Fadzli
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 1j 00m
+      URL    : https://www.youtube.com/watch?v=gGu8VJuR9vs
+
+ 80. 21-01-2026 Ustaz Fadzil : Tafsir Juzuk 28 | Surah At-Tahrim
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 7
+      Tempoh : 59m
+      URL    : https://www.youtube.com/watch?v=Pw2ywZpBsS8
+
+ 81. 21-02-2024 Ustaz Fadzil Kamaruddin : Tafsir Juzuk 29
+      Ustaz  : Fadzil Kamaruddin
+      Jenis  : tafsir
+      Sesi   : 2
+      Tempoh : 54m
+      URL    : https://www.youtube.com/watch?v=jIIQu9uTx9M
+
+ 82. 21-05-2025 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Al-Qalam
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 9
+      Tempoh : 1j 02m
+      URL    : https://www.youtube.com/watch?v=swbXG0nUTpo
+
+ 83. 22-01-2025 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Al-Ma' arij
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 57m
+      URL    : https://www.youtube.com/watch?v=XA9RP38J3sA
+
+ 84. 23-01-2025 Datuk Abdul Rasyid Idris: Tafsir Surah 'Abasa, Ayat 33-42
+      Ustaz  : (nama ustaz tidak jelas)
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 36m
+      URL    : https://www.youtube.com/watch?v=WFYgBcBp-B4
+
+ 85. 23-10-2024 Ustaz Fadzil : Tafsir Juzuk 29 & Isu RUU
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 1j 03m
+      URL    : https://www.youtube.com/watch?v=WGvfWh3Gckk
+
+ 86. 24-04-2024 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Al-Muzzammil
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 52m
+      URL    : https://www.youtube.com/watch?v=p_1ur17LDsU
+
+ 87. 24-05-2024 Ustaz Qarni Edrus : Tafsir Surah As-Syura
+      Ustaz  : Qarni Edrus
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 56m
+      URL    : https://www.youtube.com/watch?v=XHWAoEI36n0
+
+ 88. 25-01-2025 SS Prof Dato Dr MAZA : Isra'iliyyat I Tafsir - Insights And Cautions (PISC 2025)
+      Ustaz  : Dato Dr MAZA
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 45m
+      URL    : https://www.youtube.com/watch?v=PxX1gW3H1TI
+
+ 89. 26-02-2025 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Al-Haqqah
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 2
+      Tempoh : 1j 01m
+      URL    : https://www.youtube.com/watch?v=bKB-rKWIy6w
+
+ 90. 26-03-2024 Sheikh Dr. Nassar Bin Muhammad Al-Harithi - Tafsir Maudu'i | Daurah Asar @ KUIPs
+      Ustaz  : Nassar Bin Muhammad Al
+      Jenis  : tafsir
+      Sesi   : 2
+      Tempoh : 39m
+      URL    : https://www.youtube.com/watch?v=j87ywWj_wfc
+
+ 91. 27-11-2024 Ustaz Fadzil : Tafsir Juzuk 29 | Surah Al-Ma'arij
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 6
+      Tempoh : 1j 03m
+      URL    : https://www.youtube.com/watch?v=Lkw1gFS078c
+
+ 92. 28-11-2024 YBrs Datuk Abdul Rasyid Idris: Tafsir Surah 'Abasa, Ayat 24-32.
+      Ustaz  : (nama ustaz tidak jelas)
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 54m
+      URL    : https://www.youtube.com/watch?v=cahXWeis-vU
+
+ 93. 29-03-2024 Ustaz Abdul Kadir Sahak : Tafsir Al-Azhar - Buya Hamka
+      Ustaz  : Abdul Kadir Sahak
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 46m
+      URL    : https://www.youtube.com/watch?v=oZUfNUlX6CE
+
+ 94. 30-04-2025 Ustaz Fadzil : Tafsir Juzuk 29 |
+      Ustaz  : Fadzil
+      Jenis  : tafsir
+      Sesi   : 2
+      Tempoh : 59m
+      URL    : https://www.youtube.com/watch?v=1uRZTDR5kxU
+
+ 95. Ustaz Ahmad Jailani Abd Ghani: Tafsir Juzuk Amma
+      Ustaz  : Ahmad Jailani Abd Ghani
+      Jenis  : tafsir
+      Sesi   : 1
+      Tempoh : 59m
+      URL    : https://www.youtube.com/watch?v=enoJfBHKuUA
