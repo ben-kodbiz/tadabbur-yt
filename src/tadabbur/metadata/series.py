@@ -61,6 +61,27 @@ _USTAZ_PREFIX_RE = re.compile(
 )
 _TRAIL_SEP_RE = re.compile(r"[\s:|\u2013-]+$")
 
+# Ustaz / speaker name extraction ("Ustaz Ahmad Hasyimi", "Dr. Abdul Basit",
+# "Dato' Dr MAZA", "Syeikh Soleh Abdul Nasir").
+_USTAZ_NAME_RE = re.compile(
+    r"^\s*(?:\(\s*\d{1,4}\s*[kKpP]?[pP]?\s*\)\s*)?"
+    r"(?:\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}\s*[:|\-]?\s*)?"
+    r"(?:\(\s*\d{1,4}\s*[kKpP]?[pP]?\s*\)\s*)?"
+    r"(?:(?:ustaz|ust\.?|ustz|ustadz|dr\.?|dato'?|datuk|prof\.?|syeikh|sheikh)\s+)"
+    r"([A-Za-z][A-Za-z' .-]{2,60}?)"
+    r"(?=\s*(?:[:|\u2013-]|$))",
+    re.IGNORECASE,
+)
+
+
+def extract_ustaz(title: str) -> str | None:
+    """Extract the ustaz/speaker name from a title, or None."""
+    m = _USTAZ_NAME_RE.search(_normalize(title or ""))
+    if not m:
+        return None
+    name = m.group(1).strip()
+    return name or None
+
 
 @dataclass
 class SeriesInfo:

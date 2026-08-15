@@ -21,7 +21,7 @@ from tadabbur.jobs.paths import (
     output_template,
     series_directory,
 )
-from tadabbur.metadata.series import SeriesInfo, series_info
+from tadabbur.metadata.series import SeriesInfo, extract_ustaz, series_info
 from tadabbur.logging import stage_logger, tag
 from tadabbur.status import (
     AUDIO_PROCESSING,
@@ -311,17 +311,18 @@ def _perform_download(
     # Organize by series: multi-session titles share one folder named after
     # the series/surah; single videos get their own folder.
     si = series_info(row["title"])
+    speaker = extract_ustaz(row["title"]) or row["uploader"] or row["channel"]
     series_folder = si.folder if si.is_series else si.folder
     directory = series_directory(
         settings,
-        speaker=row["uploader"] or row["channel"],
+        speaker=speaker,
         series_folder=series_folder,
     )
     directory.mkdir(parents=True, exist_ok=True)
 
     tpl = output_template(
         settings,
-        speaker=row["uploader"] or row["channel"],
+        speaker=speaker,
         source_id=row["source_id"],
         video_id=vid,
         published_at=row["published_at"],

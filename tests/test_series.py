@@ -2,7 +2,27 @@
 
 from __future__ import annotations
 
-from tadabbur.metadata.series import SeriesInfo, series_info
+from tadabbur.metadata.series import SeriesInfo, extract_ustaz, series_info
+
+
+def test_extract_ustaz_basic():
+    assert extract_ustaz("Ustaz Ahmad Jailani Abd Ghani: Tafsir Juzuk Amma") == "Ahmad Jailani Abd Ghani"
+
+
+def test_extract_ustaz_with_date_prefix():
+    assert extract_ustaz("05-03-2026 Ustaz Ahmad Hasyimi : Tadabbur Surah Al-An'am Siri Ke-35") == "Ahmad Hasyimi"
+
+
+def test_extract_ustaz_with_quality_tag():
+    assert extract_ustaz("(4K) 25-11-2024 Ustaz Qarni Edrus : Mukhtasar As-Soghir") == "Qarni Edrus"
+
+
+def test_extract_ustaz_dr():
+    assert extract_ustaz("14-09-2024 Dr. Abdul Basit : Sirah Yang Sahih") == "Abdul Basit"
+
+
+def test_extract_ustaz_none():
+    assert extract_ustaz("Tadabbur Surah Al-Mulk") is None
 
 
 def test_surah_series_grouping():
