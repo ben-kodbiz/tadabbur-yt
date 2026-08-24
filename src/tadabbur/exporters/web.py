@@ -101,7 +101,9 @@ def export_web_data(
                 "name": ustaz,
                 "platform": row["source_platform"],
                 "channel_url": (lambda r: repo.get_source(r)["channel_url"] if r else None)(row["source_id"]),
+                "_count": 0,
             }
+        speakers[speaker_id]["_count"] = speakers[speaker_id].get("_count", 0) + 1
 
         ref = {
             "surah_number": None,
@@ -119,6 +121,9 @@ def export_web_data(
                 if parts:
                     ref["ayah_start"] = int(parts[0])
                     ref["ayah_end"] = int(parts[-1])
+
+        if ref["surah_name"]:
+            surahs[ref["surah_name"]] = surahs.get(ref["surah_name"], 0) + 1
 
         media_root = settings.storage.resolved_media_dir
         if not media_root.is_absolute():
@@ -155,7 +160,10 @@ def export_web_data(
         )
 
     _write_json(out_dir, "lectures.json", lectures)
-    _write_json(out_dir, "speakers.json", list(speakers.values()))
+    _write_json(out_dir, "speakers.json", [
+        {k: v for k, v in s.items() if k != "_count"} | {"lectures": s.get("_count", 0)}
+        for s in speakers.values()
+    ])
     _write_json(out_dir, "surahs.json", sorted(
         ({"name": k, "count": v} for k, v in surahs.items()),
         key=lambda x: str(x["name"]),
