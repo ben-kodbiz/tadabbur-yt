@@ -259,5 +259,93 @@ def dashboard_cmd(
     serve_dashboard(ingest_settings, up_settings, host=host, port=port)
 
 
+@app.command("import")
+def import_cmd(
+    file: str = typer.Argument(..., help="Path to a local audio/video file."),
+    source: str = typer.Option("local-samples", help="Source key."),
+    media_id: Optional[str] = typer.Option(None, help="Original media id (default: file hash prefix)."),
+    title: Optional[str] = typer.Option(None, help="Original title (default: filename)."),
+    speaker: Optional[str] = typer.Option(None, help="Uploader/speaker name."),
+    rights: str = typer.Option(
+        "manual_review_required",
+        help="Rights status to record (e.g. owned_by_operator for your own samples).",
+    ),
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """Register a local file as a pipeline item (offline testing / own content).
+
+    The file is copied into incoming/originals/<source>/<id>/ with provenance,
+    exactly as a downloaded item would be.
+    """
+    import hashlib
+    import shutil
+
+    from tadabbur.uploader.models import MediaState
+
+    src_path = Path(file).expanduser().resolve()
+    if not src_path.exists():
+        raise typer.BadParameter(f"file not found: {src_path}")
+
+    settings, project_dir = _settings(config)
+    repo = _repo(settings, project_dir)
+
+    if media_id is None:
+        h = hashlib.sha256(src_path.read_bytes()).hexdigest()
+        media_id = f"local_{h[:11]}"
+    title = title or src_path.stem
+
+    src_id = repo.upsert_source(
+        source_key=source, name=source.replace("-", " ").title(),
+        channel_url=None, attribution_text=f"Original source: {source}",
+    )
+    mid = repo.insert_media_item(
+        source_id=src_id, platform="local", original_media_id=media_id,
+        original_url=src_path.as_uri(), original_title=title,
+        uploader_name=speaker, rights_status=rights,
+        state=MediaState.DISCOVERED,
+    )
+    if mid is None:
+        console.print(f"[UP-IMPORT] item already exists: {source}/{media_id}")
+        raise typer.Exit(code=1)
+    mid = int(mid)
+
+    # Copy into the archival layout and record it like a downloaded original.
+    directory = project_dir / settings.base_dir / "incoming" / "originals" / source / media_id
+    directory.mkdir(parents=True, exist_ok=True)
+    dest = directory / f"{source}__{media_id}__original{src_path.suffix}"
+    shutil.copy2(src_path, dest)
+    repo.upsert_file(media_item_id=mid, file_type="original_media", path=dest,
+                     extension=dest.suffix.lstrip("."),
+                     size_bytes=dest.stat().st_size)
+    # Rights decision recorded explicitly (even for imports).
+    if rights != "manual_review_required":
+        repo.transition(mid, MediaState.RIGHTS_REVIEW)
+        repo.transition(mid, MediaState.DOWNLOAD_PENDING)
+        repo.review_rights(mid, rights_status=rights, notes="imported sample")
+
+    console.print(f"[UP-IMPORT] item={mid} source={source}/{media_id} file={dest.name}")
+
+
+@app.command("process")
+def process_cmd(
+    item_id: int = typer.Argument(..., help="Media item id."),
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """Run download -> audio -> render -> validate for one approved item.
+
+    Items imported from local files skip the network stage entirely.
+    """
+    from tadabbur.config.models import Settings as IngestSettings
+    from tadabbur.uploader.process import process_item
+
+    up_settings, project_dir = _settings(config)
+    repo = _repo(up_settings, project_dir)
+    ingest = IngestSettings(project_dir=project_dir)
+
+    outcome = process_item(ingest, up_settings, repo, item_id)
+    console.print(str(outcome))
+    raise typer.Exit(code=0 if outcome.ok else 1)
+
+
 if __name__ == "__main__":
     app()
