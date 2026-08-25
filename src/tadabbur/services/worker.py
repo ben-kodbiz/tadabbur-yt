@@ -18,6 +18,7 @@ from tadabbur.downloader.circuit_breaker import CircuitBreaker
 from tadabbur.exporters import export_web_data
 from tadabbur.logging import setup_logging, stage_logger, tag as log_tag
 from tadabbur.services.classification import classify
+from tadabbur.services.lock import WorkerLock
 from tadabbur.services.publish import publish
 from tadabbur.services.tagging import tag as tag_stage
 from tadabbur.validator import run_validation
@@ -52,6 +53,13 @@ def run_worker(
     db_path = settings.storage.database_path
     if not db_path.is_absolute():
         db_path = settings.project_dir / db_path
+
+    # Single-instance protection: never overlap with another worker.
+    lock = WorkerLock(settings.resolve_path(settings.storage.base_dir) / "worker.lock")
+    if not lock.acquire():
+        logger.warning("[WORKER] another worker is active, exiting safely")
+        return "[WORKER] another worker is active, exiting safely"
+
     conn = open_database(db_path)
     repo = Repository(conn)
     try:
@@ -72,6 +80,7 @@ def run_worker(
         return "[WORKER] shutdown requested"
     finally:
         conn.close()
+        lock.release()
 
 
 def run_single_pass(
