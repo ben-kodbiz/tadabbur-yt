@@ -39,17 +39,13 @@ class UploadMetadata:
 def build_title(original_title: str, speaker: str | None = None,
                 *, template: str = "[Archive] {title} — {speaker}") -> str:
     """Archive title format: `[Archive] Original Title — Original Speaker`."""
-    text = template.format(title=original_title.strip(), speaker=(speaker or "").strip())
-    if len(text) > MAX_YT_TITLE:
-        # Trim the title portion, keep the suffix intact where possible.
-        suffix_len = len((speaker or "").strip()) + 12  # ' — ' + '[Archive] '
-        keep = max(20, MAX_YT_TITLE - suffix_len)
-        title_part = original_title.strip()[:keep].rstrip()
-        if title_part != original_title.strip():
-            title_part += "…"
-        text = template.format(title=title_part, speaker=(speaker or "").strip())
-        text = text[:MAX_YT_TITLE]
-    return text
+    prefix = "[Archive] "
+    suffix = f" — {(speaker or '').strip()}" if speaker else ""
+    budget = max(20, MAX_YT_TITLE - len(prefix) - len(suffix))
+    title_part = original_title.strip()
+    if len(prefix) + len(title_part) + len(suffix) > MAX_YT_TITLE:
+        title_part = title_part[: budget - 1].rstrip() + "…"
+    return f"{prefix}{title_part}{suffix}"
 
 
 def build_description(
