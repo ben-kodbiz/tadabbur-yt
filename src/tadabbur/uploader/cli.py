@@ -244,5 +244,20 @@ def upload_cmd(
     console.print(f"[UP-UPLOAD] done: {uploaded} uploaded")
 
 
+@app.command("dashboard")
+def dashboard_cmd(
+    host: str = typer.Option("127.0.0.1"),
+    port: int = typer.Option(8767),
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """Local review dashboard (rights approval, queue overview)."""
+    from tadabbur.config import load_settings as load_ingest
+    from tadabbur.uploader.dashboard import serve_dashboard
+
+    up_settings, _project_dir = _settings(config)
+    ingest_settings = load_ingest()  # path resolution for the shared project
+    serve_dashboard(ingest_settings, up_settings, host=host, port=port)
+
+
 if __name__ == "__main__":
     app()
