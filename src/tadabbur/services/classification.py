@@ -39,23 +39,32 @@ def _source_from_row(row, settings: Settings | None = None) -> Source | None:
     return source
 
 
-def run_classification(settings: Settings) -> str:
-    """Classify all DISCOVERED media, persist classification, set status."""
+def run_classification(settings: Settings, *, video_id: str | None = None) -> str:
+    """Classify DISCOVERED media (optionally a single video), persist result."""
     db_path = settings.storage.database_path
     if not db_path.is_absolute():
         db_path = settings.project_dir / db_path
     conn = open_database(db_path)
     try:
-        return classify(repository=Repository(conn), settings=settings)
+        return classify(repository=Repository(conn), settings=settings, video_id=video_id)
     finally:
         conn.close()
 
 
-def classify(repository: Repository, settings: Settings) -> str:
-    """Engine: classify all DISCOVERED media in the given repository."""
+def classify(
+    repository: Repository,
+    settings: Settings,
+    *,
+    video_id: str | None = None,
+) -> str:
+    """Engine: classify DISCOVERED media in the given repository.
+
+    When ``video_id`` is given only that video is classified; batch
+    behaviour is unchanged when it is None.
+    """
     repo = repository
     lines: list[str] = []
-    media_rows = repo.list_media_by_status("DISCOVERED")
+    media_rows = repo.list_media_by_status("DISCOVERED", video_id=video_id)
     threshold = settings.classification.confidence_threshold
 
     for row in media_rows:

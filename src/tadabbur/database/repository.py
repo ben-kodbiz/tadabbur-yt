@@ -130,9 +130,24 @@ class Repository:
             "SELECT * FROM media WHERE external_id = ?", (external_id,)
         ).fetchone()
 
-    def list_media_by_status(self, status: str, limit: int | None = None) -> list[sqlite3.Row]:
-        sql = "SELECT * FROM media WHERE status = ? ORDER BY created_at ASC"
+    def list_media_by_status(
+        self,
+        status: str,
+        limit: int | None = None,
+        *,
+        video_id: str | None = None,
+    ) -> list[sqlite3.Row]:
+        """List media by status, optionally scoped to a single external id.
+
+        Filtering happens at the query level so single-video operations never
+        load (or touch) unrelated rows.
+        """
+        sql = "SELECT * FROM media WHERE status = ?"
         args: list[Any] = [status]
+        if video_id is not None:
+            sql += " AND external_id = ?"
+            args.append(video_id)
+        sql += " ORDER BY created_at ASC"
         if limit is not None:
             sql += " LIMIT ?"
             args.append(limit)

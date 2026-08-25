@@ -11,22 +11,26 @@ from tadabbur.tagging import generate_tags
 logger = stage_logger("tag")
 
 
-def run_tagging(settings: Settings) -> str:
+def run_tagging(settings: Settings, *, video_id: str | None = None) -> str:
     db_path = settings.storage.database_path
     if not db_path.is_absolute():
         db_path = settings.project_dir / db_path
     conn = open_database(db_path)
     try:
-        return tag(repository=Repository(conn))
+        return tag(repository=Repository(conn), video_id=video_id)
     finally:
         conn.close()
 
 
-def tag(repository: Repository) -> str:
-    """Engine: tag all media in PROCESSED state."""
+def tag(repository: Repository, *, video_id: str | None = None) -> str:
+    """Engine: tag media in PROCESSED state.
+
+    When ``video_id`` is given only that video is tagged; batch behaviour
+    is unchanged when it is None.
+    """
     repo = repository
     lines: list[str] = []
-    rows = repo.list_media_by_status(PROCESSED)
+    rows = repo.list_media_by_status(PROCESSED, video_id=video_id)
 
     for row in rows:
         classification = repo.get_effective_classification(int(row["id"]))

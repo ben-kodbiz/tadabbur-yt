@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from tadabbur.config.models import Settings
 from tadabbur.database import Repository, open_database
-from tadabbur.downloader import run_download
+from tadabbur.downloader import run_download as engine_run_download
 from tadabbur.services.classification import run_classification
 from tadabbur.services.tagging import run_tagging
 from tadabbur.status import FAILED, QUEUED
@@ -31,17 +31,17 @@ def _process(repo: Repository, settings: Settings, video_id: str) -> str:
 
     current = row["status"]
     if current == "DISCOVERED":
-        run_classification(settings)
+        run_classification(settings, video_id=video_id)
 
     row = repo.get_media_by_external_id(video_id)
     if row["status"] == QUEUED:
-        outcomes = run_download(settings, video_id=video_id)
+        outcomes = engine_run_download(settings, repo, video_id=video_id)
         if not outcomes or outcomes[0].status == FAILED:
             return f"[PIPELINE] video={video_id} download failed"
 
     row = repo.get_media_by_external_id(video_id)
     if row["status"] == "PROCESSED":
-        run_tagging(settings)
+        run_tagging(settings, video_id=video_id)
 
     row = repo.get_media_by_external_id(video_id)
     if row["status"] == "TAGGED":
