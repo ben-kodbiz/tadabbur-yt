@@ -68,6 +68,8 @@ class DownloadConfig(BaseModel):
     socket_timeout: int = 30
     limit_rate: str | None = None
     audio_only: bool = False
+    resume: bool = True
+    keep_part_files: bool = True
 
 
 class ProxyConfig(BaseModel):

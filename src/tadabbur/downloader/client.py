@@ -109,7 +109,17 @@ class YtDlpClient:
             str(d.concurrent_fragments),
             "--socket-timeout",
             str(d.socket_timeout),
-        ]
+        ] + self._part_args()
+
+    def _part_args(self) -> list[str]:
+        """Part-file behaviour, decided in exactly one place.
+
+        ``download.resume = true``  -> allow .part files so yt-dlp can resume.
+        ``download.resume = false`` -> --no-part (restart downloads from zero).
+        """
+        if not self.settings.download.resume:
+            return ["--no-part"]
+        return []
 
     def run(self, args: list[str], *, timeout: int | None = None) -> YtDlpResult:
         """Execute yt-dlp with the given arguments (full argv provided)."""
@@ -120,13 +130,19 @@ class YtDlpClient:
         started = time.monotonic()
         logger.debug("yt-dlp argv: %s", cmd)
 
-        proc = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=timeout or 300,
-            check=False,
-        )
+        try:
+            proc = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=timeout or 300,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            logger.warning("yt-dlp timed out after %ss", timeout or 300)
+            raise YtDlpError(
+                f"yt-dlp timed out after {timeout or 300} seconds"
+            ) from exc
         result = YtDlpResult(
             command=cmd,
             exit_code=proc.returncode,
@@ -185,7 +201,6 @@ class YtDlpClient:
     ) -> YtDlpResult:
         d = self.settings.download
         args = self._base_args() + [
-            "--no-part",
             "--merge-output-format",
             d.merge_output_format,
             "--format",
@@ -216,7 +231,6 @@ class YtDlpClient:
     ) -> YtDlpResult:
         d = self.settings.download
         args = self._base_args() + [
-            "--no-part",
             "--extract-audio",
             "--audio-format",
             d.audio_format,
@@ -247,7 +261,6 @@ class YtDlpClient:
         to correct the container if required (fast).
         """
         args = self._base_args() + [
-            "--no-part",
             "--newline",
             "--progress",
             "--format",

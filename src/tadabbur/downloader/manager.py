@@ -149,14 +149,24 @@ def _recover_interrupted(
             )
             continue
 
-        # Incomplete output: delete partial media files, reset to QUEUED.
+        # Incomplete output: reset to QUEUED so the next run retries.
+        # With resume enabled the .part file is kept so yt-dlp continues
+        # from the already-downloaded bytes; otherwise it is removed.
         si = series_info(row["title"])
         directory = series_directory(
             settings,
             speaker=row["uploader"] or row["channel"],
             series_folder=si.folder,
         )
-        _cleanup_partial_outputs(directory, row["external_id"])
+        if not (settings.download.resume and settings.download.keep_part_files):
+            _cleanup_partial_outputs(directory, row["external_id"])
+        else:
+            part = _find_part_file(directory, row["external_id"])
+            if part is not None:
+                logger.info(
+                    "[DOWNLOAD] video=%s keeping %s for resumable retry",
+                    row["external_id"], part.name,
+                )
         logger.warning(
             "[DOWNLOAD] video=%s interrupted in %s, resetting to QUEUED",
             row["external_id"], status,
@@ -164,6 +174,16 @@ def _recover_interrupted(
         repo.transition_media(int(row["id"]), QUEUED)
         recovered.append(repo.get_media(int(row["id"])))
     return recovered
+
+
+def _find_part_file(directory: Path, vid: str) -> Path | None:
+    """Return an interrupted ``.part`` file for this video, or None."""
+    if not directory.exists():
+        return None
+    for p in directory.iterdir():
+        if p.is_file() and vid in p.name and ".part" in p.name:
+            return p
+    return None
 
 
 def _cleanup_partial_outputs(directory: Path, video_id: str) -> None:
