@@ -541,3 +541,52 @@ class Repository:
             (name, state, failure_count, cooldown_until),
         )
         self._conn.commit()
+
+    # --------------------------------------------------- source sync state
+    def get_source_sync_state(self, source_id: str) -> dict | None:
+        row = self._conn.execute(
+            "SELECT * FROM source_sync_state WHERE source_id = ?", (source_id,)
+        ).fetchone()
+        if row is None:
+            return None
+        return {
+            "source_id": row["source_id"],
+            "last_success_at": row["last_success_at"],
+            "last_seen_video_id": row["last_seen_video_id"],
+            "last_error": row["last_error"],
+            "consecutive_failures": row["consecutive_failures"],
+        }
+
+    def record_source_success(self, source_id: str, last_seen_video_id: str | None) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO source_sync_state
+                (source_id, last_success_at, last_seen_video_id, last_error,
+                 consecutive_failures, updated_at)
+            VALUES (?, strftime('%Y-%m-%dT%H:%M:%fZ','now'), ?, NULL, 0,
+                    strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+            ON CONFLICT(source_id) DO UPDATE SET
+                last_success_at = excluded.last_success_at,
+                last_seen_video_id = excluded.last_seen_video_id,
+                last_error = NULL,
+                consecutive_failures = 0,
+                updated_at = excluded.updated_at
+            """,
+            (source_id, last_seen_video_id),
+        )
+        self._conn.commit()
+
+    def record_source_failure(self, source_id: str, error: str) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO source_sync_state
+                (source_id, last_error, consecutive_failures, updated_at)
+            VALUES (?, ?, 1, strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+            ON CONFLICT(source_id) DO UPDATE SET
+                last_error = excluded.last_error,
+                consecutive_failures = consecutive_failures + 1,
+                updated_at = excluded.updated_at
+            """,
+            (source_id, error),
+        )
+        self._conn.commit()

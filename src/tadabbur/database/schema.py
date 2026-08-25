@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 # Migrations from version N -> N+1 (each a list of SQL statements).
 MIGRATIONS: dict[int, list[str]] = {
@@ -18,6 +18,18 @@ MIGRATIONS: dict[int, list[str]] = {
             failure_count   INTEGER NOT NULL DEFAULT 0,
             cooldown_until  REAL,
             updated_at      TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+        )
+        """,
+    ],
+    3: [
+        """
+        CREATE TABLE IF NOT EXISTS source_sync_state (
+            source_id             TEXT PRIMARY KEY REFERENCES sources(id),
+            last_success_at       TEXT,
+            last_seen_video_id    TEXT,
+            last_error            TEXT,
+            consecutive_failures  INTEGER NOT NULL DEFAULT 0,
+            updated_at            TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
         )
         """,
     ],
@@ -166,6 +178,15 @@ CREATE TABLE IF NOT EXISTS circuit_state (
     failure_count   INTEGER NOT NULL DEFAULT 0,
     cooldown_until  REAL,
     updated_at      TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
+CREATE TABLE IF NOT EXISTS source_sync_state (
+    source_id             TEXT PRIMARY KEY REFERENCES sources(id),
+    last_success_at       TEXT,
+    last_seen_video_id    TEXT,
+    last_error            TEXT,
+    consecutive_failures  INTEGER NOT NULL DEFAULT 0,
+    updated_at            TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_transitions_media ON state_transitions(media_id);

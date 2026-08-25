@@ -122,7 +122,13 @@ def run_discovery(
         except (YtDlpError, OSError) as exc:
             logger.error("[DISCOVER] source=%s error=%s", source.id, exc)
             result.errors.append(f"{source.id}: {exc}")
+            repo.record_source_failure(source.id, str(exc)[:500])
             continue
+
+        # Channel listings are newest-first. Once we see a run of already
+        # known video ids we can stop scanning the historical tail.
+        consecutive_known = 0
+        KNOWN_STOP = 5
 
         for entry in entries:
             try:
@@ -133,7 +139,16 @@ def run_discovery(
 
             if repo.media_exists(record["source_id"], record["external_id"]):
                 result.duplicates.append(record["external_id"])
+                consecutive_known += 1
+                if consecutive_known >= KNOWN_STOP:
+                    logger.info(
+                        "[DISCOVER] source=%s reached known history, stopping scan",
+                        source.id,
+                    )
+                    break
                 continue
+
+            consecutive_known = 0
 
             if dry_run:
                 logger.info(
@@ -160,6 +175,15 @@ def run_discovery(
                 source.id,
             )
             result.discovered.append(record["external_id"])
+
+        # Record the sync outcome for incremental discovery.
+        last_seen = None
+        if entries:
+            try:
+                last_seen = str(entries[0].get("id") or "") or None
+            except Exception:  # noqa: BLE001
+                last_seen = None
+        repo.record_source_success(source.id, last_seen)
 
     return result
 
