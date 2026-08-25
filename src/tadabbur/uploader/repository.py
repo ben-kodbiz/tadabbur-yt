@@ -58,6 +58,11 @@ class UploaderRepository:
             "SELECT * FROM sources WHERE source_key = ?", (source_key,)
         ).fetchone()
 
+    def get_source_by_id(self, source_id: int) -> sqlite3.Row | None:
+        return self._conn.execute(
+            "SELECT * FROM sources WHERE id = ?", (source_id,)
+        ).fetchone()
+
     def list_sources(self, *, enabled_only: bool = False) -> list[sqlite3.Row]:
         sql = "SELECT * FROM sources"
         if enabled_only:
