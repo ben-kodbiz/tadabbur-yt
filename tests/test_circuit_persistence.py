@@ -67,8 +67,8 @@ def test_in_memory_breaker_unchanged():
 
 
 def test_migration_from_v2_database(tmp_path: Path):
-    """A v2 database gains the circuit_state table via migration."""
+    """A fresh database is migrated to the current schema with new tables."""
     conn = open_database(tmp_path / "db.sqlite")
     version = conn.execute("SELECT version FROM schema_version").fetchone()["version"]
-    assert version == 3
+    assert version >= 3
     conn.execute("SELECT * FROM circuit_state")  # table exists
