@@ -131,29 +131,49 @@ def _render_title_png(
     out_path: Path, width: int, height: int, *, title: str,
     source_name: str, channel_label: str,
 ) -> Path | None:
-    """Draw a simple dark archive card with drawtext (no font files needed)."""
-    # Wrap the title into lines of ~34 chars to fit the card.
-    lines = [title[i:i + 34] for i in range(0, min(len(title), 340), 34)]
-    title_block = "\n".join(lines)
+    """Archive attribution card (fix_me.md #10).
+
+    The visual itself must make provenance clear — never claim ownership
+    or unrecorded permission.
+    """
+    # Wrap long text into lines that fit the card.
+    def wrap(text: str, n: int) -> str:
+        return "\n".join(text[i:i + n] for i in range(0, min(len(text), n * 6), n))
+
+    title_block = wrap(title, 34).replace(":", "\\:")
+    source_block = wrap(source_name, 40).replace(":", "\\:")
 
     drawtexts = [
-        # Title (upper-middle)
+        # Header makes the archival nature explicit.
         (
-            "drawtext=text='%s':fontcolor=white:fontsize=44:"
-            "x=(w-text_w)/2:y=h*0.30:text_align=center"
-            % _esc(title_block).replace("\n", "\\n").replace(":", "\\:")
+            "drawtext=text='ORIGINAL RECORDING':fontcolor=white:fontsize=30:"
+            "x=(w-text_w)/2:y=h*0.08"
         ),
-        # Source attribution (below title)
+        # Title
         (
-            "drawtext=text='Original source\\: %s':fontcolor=0xB0BEC5:fontsize=30:"
-            "x=(w-text_w)/2:y=h*0.62"
-            % _esc(source_name.replace(":", "\\:"))
+            "drawtext=text='%s':fontcolor=white:fontsize=40:"
+            "x=(w-text_w)/2:y=h*0.20:text_align=center"
+            % title_block
         ),
-        # Channel label (bottom)
+        # Speaker / original source
         (
-            "drawtext=text='%s':fontcolor=0x607D8B:fontsize=22:"
-            "x=(w-text_w)/2:y=h*0.88"
+            "drawtext=text='Speaker\\: %s':fontcolor=0xB0BEC5:fontsize=28:"
+            "x=(w-text_w)/2:y=h*0.55"
+            % source_block
+        ),
+        (
+            "drawtext=text='Original Source\\: %s':fontcolor=0xB0BEC5:fontsize=24:"
+            "x=(w-text_w)/2:y=h*0.63"
             % _esc(channel_label.replace(":", "\\:"))
+        ),
+        # Disclaimer (visible on every frame of the video)
+        (
+            "drawtext=text='No authorship of the original recording is claimed.':"
+            "fontcolor=0x78909C:fontsize=22:x=(w-text_w)/2:y=h*0.82"
+        ),
+        (
+            "drawtext=text='Original link\\: see description':"
+            "fontcolor=0x78909C:fontsize=22:x=(w-text_w)/2:y=h*0.87"
         ),
     ]
     vf = ",".join(drawtexts)

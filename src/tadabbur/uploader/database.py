@@ -5,9 +5,38 @@ from __future__ import annotations
 import sqlite3
 from pathlib import Path
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
-MIGRATIONS: dict[int, list[str]] = {}
+MIGRATIONS: dict[int, list[str]] = {
+    1: [
+        "ALTER TABLE media_items ADD COLUMN original_sha256 TEXT",
+        """
+        CREATE TABLE IF NOT EXISTS media_events (
+            id INTEGER PRIMARY KEY,
+            media_item_id INTEGER NOT NULL REFERENCES media_items(id),
+            event_type TEXT NOT NULL,
+            old_state TEXT,
+            new_state TEXT,
+            message TEXT,
+            error_category TEXT,
+            created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_media_events_media ON media_events(media_item_id)",
+        """
+        CREATE TABLE IF NOT EXISTS upload_attempts (
+            id INTEGER PRIMARY KEY,
+            media_item_id INTEGER NOT NULL REFERENCES media_items(id),
+            attempt_no INTEGER NOT NULL DEFAULT 1,
+            started_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+            finished_at TEXT,
+            status TEXT NOT NULL DEFAULT 'running',
+            error_category TEXT
+        )
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_upload_attempts_media ON upload_attempts(media_item_id)",
+    ],
+}
 
 SCHEMA_SQL = """
 PRAGMA foreign_keys = ON;
@@ -45,6 +74,7 @@ CREATE TABLE IF NOT EXISTS media_items (
     duration_seconds REAL,
 
     rights_status TEXT NOT NULL DEFAULT 'manual_review_required',
+    original_sha256 TEXT,
     rights_reviewed_at TEXT,
     rights_notes TEXT,
     permission_reference TEXT,
@@ -132,6 +162,31 @@ CREATE TABLE IF NOT EXISTS uploads (
     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
     UNIQUE(media_item_id, platform)
 );
+
+CREATE TABLE IF NOT EXISTS media_events (
+    id INTEGER PRIMARY KEY,
+    media_item_id INTEGER NOT NULL REFERENCES media_items(id),
+    event_type TEXT NOT NULL,
+    old_state TEXT,
+    new_state TEXT,
+    message TEXT,
+    error_category TEXT,
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_media_events_media ON media_events(media_item_id);
+
+CREATE TABLE IF NOT EXISTS upload_attempts (
+    id INTEGER PRIMARY KEY,
+    media_item_id INTEGER NOT NULL REFERENCES media_items(id),
+    attempt_no INTEGER NOT NULL DEFAULT 1,
+    started_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+    finished_at TEXT,
+    status TEXT NOT NULL DEFAULT 'running',
+    error_category TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_upload_attempts_media ON upload_attempts(media_item_id);
 """
 
 

@@ -68,7 +68,14 @@ def build_queue_plan(
 
 
 def _preupload_check(repo: UploaderRepository, media_item_id: int) -> str | None:
-    """Return rejection reason, or None if the item may be uploaded."""
+    """Return rejection reason, or None if the item may be uploaded.
+
+    Final upload gate (fix_me.md #20/#21): rights approved, original exists,
+    archive audio valid, YouTube MP4 valid, metadata valid, not already
+    uploaded.
+    """
+    from tadabbur.uploader.validator import validate_archive_audio, validate_youtube_video
+
     row = repo.get_media_item(media_item_id)
     if row is None:
         return "item not found"
@@ -77,12 +84,33 @@ def _preupload_check(repo: UploaderRepository, media_item_id: int) -> str | None
         return f"rights_status={row['rights_status']} not approved"
     if row["state"] != MediaState.READY_FOR_UPLOAD:
         return f"state={row['state']} not ready"
+
+    # Already-uploaded items must never re-enter the queue (#8).
+    if repo.already_uploaded(media_item_id):
+        rec = repo.get_upload_record(media_item_id)
+        return f"already uploaded as {rec['platform_video_id']}"
+
+    original = repo.get_file(media_item_id, "original_media")
+    if original is None or not Path(original["path"]).exists():
+        return "original missing on disk"
+
+    opus = repo.get_file(media_item_id, "processed_opus")
+    if opus is None or not Path(opus["path"]).exists():
+        return "no archive audio recorded"
+    audio_report = validate_archive_audio(Path(opus["path"]))
+    if not audio_report.ok:
+        return f"archive audio invalid: {'; '.join(audio_report.errors)}"
+
     f = repo.get_file(media_item_id, "youtube_mp4")
     if f is None:
         return "no rendered youtube mp4 recorded"
     p = Path(f["path"])
     if not p.exists():
         return "mp4 missing on disk"
+    video_report = validate_youtube_video(p)
+    if not video_report.ok:
+        return f"mp4 invalid: {'; '.join(video_report.errors)}"
+
     if ffmpeg_available() is False:
         return "ffmpeg unavailable"  # needed for post-upload verification
     return None

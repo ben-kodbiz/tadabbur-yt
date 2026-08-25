@@ -352,3 +352,101 @@ class UploaderRepository:
             "SELECT state, COUNT(*) n FROM media_items GROUP BY state ORDER BY state"
         ).fetchall()
         return {r["state"]: r["n"] for r in rows}
+
+    # ------------------------------------------------------------- events
+    def record_event(
+        self,
+        media_item_id: int,
+        event_type: str,
+        *,
+        old_state: str | None = None,
+        new_state: str | None = None,
+        message: str | None = None,
+        error_category: str | None = None,
+    ) -> None:
+        """Append to the audit history (never log secrets)."""
+        self._conn.execute(
+            """
+            INSERT INTO media_events
+                (media_item_id, event_type, old_state, new_state, message, error_category)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (media_item_id, event_type, old_state, new_state,
+             message[:1000] if message else None, error_category),
+        )
+        self._conn.commit()
+
+    def list_events(self, media_item_id: int) -> list[sqlite3.Row]:
+        return self._conn.execute(
+            "SELECT * FROM media_events WHERE media_item_id = ? ORDER BY id",
+            (media_item_id,),
+        ).fetchall()
+
+    # --------------------------------------------------- sha256 duplicates
+    def set_original_sha256(self, media_item_id: int, sha256: str) -> None:
+        self._conn.execute(
+            "UPDATE media_items SET original_sha256 = ?, "
+            "updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id = ?",
+            (sha256, media_item_id),
+        )
+        self._conn.commit()
+
+    def find_sha256_duplicates(self) -> list[sqlite3.Row]:
+        """Items sharing an original checksum with a different item (§12).
+
+        Flags only — never deletes.
+        """
+        return self._conn.execute(
+            """
+            SELECT m.id, m.original_media_id, m.original_title, m.original_sha256
+            FROM media_items m
+            WHERE m.original_sha256 IS NOT NULL
+              AND EXISTS (
+                  SELECT 1 FROM media_items other
+                  WHERE other.original_sha256 = m.original_sha256
+                    AND other.id != m.id
+              )
+            ORDER BY m.original_sha256, m.id
+            """
+        ).fetchall()
+
+    # ------------------------------------------------------ upload safety
+    def get_upload_record(self, media_item_id: int, platform: str = "youtube") -> sqlite3.Row | None:
+        return self._conn.execute(
+            "SELECT * FROM uploads WHERE media_item_id = ? AND platform = ?",
+            (media_item_id, platform),
+        ).fetchone()
+
+    def already_uploaded(self, media_item_id: int, platform: str = "youtube") -> bool:
+        """§8: true only when a platform video id exists (verified upload)."""
+        row = self.get_upload_record(media_item_id, platform)
+        return bool(row and row["platform_video_id"])
+
+    def start_upload_attempt(self, media_item_id: int) -> int:
+        row = self._conn.execute(
+            "SELECT COALESCE(MAX(attempt_no), 0) n FROM upload_attempts WHERE media_item_id = ?",
+            (media_item_id,),
+        ).fetchone()
+        cur = self._conn.execute(
+            """
+            INSERT INTO upload_attempts (media_item_id, attempt_no, status)
+            VALUES (?, ?, 'running')
+            """,
+            (media_item_id, int(row["n"]) + 1),
+        )
+        self._conn.commit()
+        return int(cur.lastrowid)
+
+    def finish_upload_attempt(self, attempt_id: int, *, ok: bool,
+                              error_category: str | None = None) -> None:
+        self._conn.execute(
+            """
+            UPDATE upload_attempts SET
+                status = CASE WHEN ? THEN 'success' ELSE 'failed' END,
+                finished_at = strftime('%Y-%m-%dT%H:%M:%fZ','now'),
+                error_category = ?
+            WHERE id = ?
+            """,
+            (ok, error_category, attempt_id),
+        )
+        self._conn.commit()

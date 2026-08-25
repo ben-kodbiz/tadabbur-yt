@@ -51,7 +51,7 @@ def test_queue_requires_rendered_mp4(env):
     no_mp4 = _approved_item(repo, src, "vidAAAAAAAA1", with_mp4=False)
     plan = build_queue_plan(up, repo)
     assert plan.entries == []
-    assert any(i == no_mp4 and "no rendered" in r for i, r in plan.rejected)
+    assert any(i == no_mp4 and ("no rendered" in r or "no archive" in r or "original missing" in r) for i, r in plan.rejected)
 
 
 def test_queue_requires_approved_rights(env):

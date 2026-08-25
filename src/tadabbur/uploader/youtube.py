@@ -25,6 +25,18 @@ logger = stage_logger("up-youtube")
 CLIENT_SECRETS_ENV = "YOUTUBE_CLIENT_SECRETS"
 TOKEN_ENV = "YOUTUBE_TOKEN_JSON"
 
+#: Error categories that are safe to retry automatically (fix_me.md #9).
+RETRYABLE_CATEGORIES = frozenset({
+    FailureCategory.NETWORK_ERROR,
+    "TIMEOUT",
+    "SERVER_ERROR",
+})
+
+#: Categories that require intervention / scheduled-later retry.
+NON_RETRYABLE_CATEGORIES = frozenset({
+    "AUTH_ERROR", "QUOTA_ERROR", "INVALID_REQUEST", "FILE_ERROR",
+})
+
 
 class YouTubeUploadError(Exception):
     def __init__(self, message: str, *, category: str = FailureCategory.UPLOAD_ERROR,
@@ -32,6 +44,30 @@ class YouTubeUploadError(Exception):
         super().__init__(message)
         self.category = category
         self.retryable = retryable
+
+
+def classify_upload_error(message: str, http_status: int | None = None) -> str:
+    """#9: structured upload failure classification."""
+    m = (message or "").lower()
+    if http_status == 401 or "invalid credentials" in m or "unauthorized" in m \
+            or "auth" in m and "error" in m:
+        return "AUTH_ERROR"
+    if "quotaexceeded" in m or "uploadlimitexceeded" in m \
+            or (http_status == 403 and ("quota" in m or "limit" in m)):
+        return "QUOTA_ERROR"
+    if http_status == 403:
+        return "AUTH_ERROR"
+    if http_status == 400 or "invalid" in m:
+        return "INVALID_REQUEST"
+    if "timed out" in m or "timeout" in m:
+        return "TIMEOUT"
+    if http_status is not None and http_status >= 500:
+        return "SERVER_ERROR"
+    if "connection" in m or "network" in m or "unreachable" in m:
+        return FailureCategory.NETWORK_ERROR
+    if "no such file" in m or "file" in m and ("missing" in m or "corrupt" in m):
+        return "FILE_ERROR"
+    return "UNKNOWN_ERROR"
 
 
 @dataclass
@@ -137,12 +173,27 @@ def upload_item(
     client: YouTubeClient,
     media_item_id: int,
 ) -> UploadOutcome:
-    """Queue-checked single-item upload with post-upload verification (§30)."""
+    """Queue-checked single-item upload with post-upload verification (§30).
+
+    fix_me.md #8: idempotent — an item with a recorded platform_video_id is
+    NEVER uploaded again. fix_me.md #7: every attempt is persisted.
+    """
     from tadabbur.uploader.queue import mark_upload_failed, record_upload_attempt
 
     row = repo.get_media_item(media_item_id)
     if row is None:
         return UploadOutcome(False, error="item not found")
+
+    # ---- idempotency gate (#8): already uploaded? do nothing ---------------
+    if repo.already_uploaded(media_item_id):
+        rec = repo.get_upload_record(media_item_id)
+        logger.info("[UP-YOUTUBE] item=%s already uploaded as %s; skipping",
+                    media_item_id, rec["platform_video_id"])
+        repo.record_event(media_item_id, "UPLOAD_SKIPPED_ALREADY_DONE",
+                          message=f"platform_video_id={rec['platform_video_id']}")
+        return UploadOutcome(True,
+                             platform_video_id=rec["platform_video_id"],
+                             platform_url=rec["platform_url"])
 
     f = repo.get_file(media_item_id, "youtube_mp4")
     if f is None or not Path(f["path"]).exists():
@@ -166,14 +217,17 @@ def upload_item(
         ),
     )
 
-    # Route through the queue states so the audit trail is complete.
     if row["state"] == MediaState.READY_FOR_UPLOAD:
         repo.transition(media_item_id, MediaState.UPLOAD_QUEUED)
     repo.transition(media_item_id, MediaState.UPLOADING)
+    repo.record_event(media_item_id, "UPLOAD_STARTED")
+
+    attempt_id = repo.start_upload_attempt(media_item_id)
     outcome = client.upload(Path(f["path"]), meta)
 
     if outcome.ok and outcome.platform_video_id:
         record_upload_attempt(repo, media_item_id, error=None)
+        repo.finish_upload_attempt(attempt_id, ok=True)
         repo.mark_uploaded(
             media_item_id,
             platform_video_id=outcome.platform_video_id,
@@ -181,12 +235,31 @@ def upload_item(
             title_used=meta.title,
         )
         repo.transition(media_item_id, MediaState.UPLOADED)
+        repo.record_event(media_item_id, "UPLOAD_COMPLETED",
+                          new_state="UPLOADED",
+                          message=f"platform_video_id={outcome.platform_video_id}")
+
+        # Optional storage cleanup — only after verified success + commit (#16).
+        if not up_settings.storage.keep_youtube_mp4_after_upload:
+            try:
+                Path(f["path"]).unlink(missing_ok=True)
+                logger.info("[UP-YOUTUBE] item=%s removed local mp4 after upload",
+                            media_item_id)
+            except OSError as exc:
+                logger.warning("[UP-YOUTUBE] could not remove mp4: %s", exc)
+
         logger.info("[UP-YOUTUBE] item=%s uploaded as %s",
                     media_item_id, outcome.platform_video_id)
     else:
+        category = classify_upload_error(outcome.error or "")
+        retryable = category in RETRYABLE_CATEGORIES
         record_upload_attempt(repo, media_item_id, error=outcome.error)
-        mark_upload_failed(repo, media_item_id, outcome.category,
+        repo.finish_upload_attempt(attempt_id, ok=False, error_category=category)
+        mark_upload_failed(repo, media_item_id, category,
                            outcome.error or "unknown upload failure")
+        repo.record_event(media_item_id, "UPLOAD_FAILED",
+                          message=(outcome.error or "")[:500],
+                          error_category=category)
     return outcome
 
 

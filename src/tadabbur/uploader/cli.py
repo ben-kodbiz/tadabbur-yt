@@ -362,5 +362,159 @@ def export_dashboard_cmd(
     console.print(f"  or:   python -m http.server 8899 --directory {out}")
 
 
+@app.command("validate")
+def validate_cmd(
+    item_id: int = typer.Argument(..., help="Media item id."),
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """Run independent artifact validation for one item (read-only)."""
+    from pathlib import Path as _Path
+
+    from tadabbur.uploader.validator import (
+        validate_archive_audio,
+        validate_original,
+        validate_youtube_video,
+    )
+
+    settings, project_dir = _settings(config)
+    repo = _repo(settings, project_dir)
+    row = repo.get_media_item(item_id)
+    if row is None:
+        raise typer.BadParameter(f"item {item_id} not found")
+
+    console.print(f"[UP-VALIDATE] item={item_id} state={row['state']}")
+    for kind, ftype, fn in (
+        ("original", "original_media", lambda p: validate_original(p)),
+        ("archive audio", "processed_opus", lambda p: validate_archive_audio(p)),
+        ("youtube mp4", "youtube_mp4", lambda p: validate_youtube_video(p)),
+    ):
+        f = repo.get_file(item_id, ftype)
+        if f is None:
+            console.print(f"  {kind}: NOT RECORDED")
+            continue
+        report = fn(_Path(f["path"]))
+        status = "[OK] VALID" if report.ok else f"[FAIL] {report}"
+        console.print(f"  {kind} ({f['path']}): {status}")
+
+
+@app.command("events")
+def events_cmd(
+    item_id: int = typer.Argument(..., help="Media item id."),
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """Show the audit/event history for one item."""
+    settings, project_dir = _settings(config)
+    repo = _repo(settings, project_dir)
+    rows = repo.list_events(item_id)
+    table = Table(title=f"Events for item {item_id}")
+    for col in ("#", "When", "Event", "Old", "New", "Message"):
+        table.add_column(col)
+    for r in rows:
+        table.add_row(str(r["id"]), (r["created_at"] or "")[0:19], r["event_type"],
+                      r["old_state"] or "", r["new_state"] or "",
+                      (r["message"] or "")[:50])
+    console.print(table)
+
+
+@app.command("duplicates")
+def duplicates_cmd(
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """Flag items sharing an original SHA-256 (never deletes; #12)."""
+    settings, project_dir = _settings(config)
+    repo = _repo(settings, project_dir)
+    rows = repo.find_sha256_duplicates()
+    if not rows:
+        console.print("[UP-DUP] no sha256 duplicates found")
+        return
+    table = Table(title=f"Possible exact duplicates ({len(rows)})")
+    for col in ("ID", "Media ID", "Title", "SHA256 (prefix)"):
+        table.add_column(col)
+    for r in rows:
+        table.add_row(str(r["id"]), r["original_media_id"],
+                      (r["original_title"] or "")[:40], r["original_sha256"][:16])
+    console.print(table)
+
+
+@app.command("repair")
+def repair_cmd(
+    item_id: int = typer.Argument(..., help="Media item id."),
+    apply: bool = typer.Option(False, "--apply", help="Apply recommended state."),
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """Inspect artifacts and recommend the correct state (#23). Read-only by default."""
+    from pathlib import Path as _Path
+
+    from tadabbur.uploader.models import MediaState
+    from tadabbur.uploader.validator import (
+        validate_archive_audio,
+        validate_original,
+        validate_youtube_video,
+    )
+
+    settings, project_dir = _settings(config)
+    repo = _repo(settings, project_dir)
+    row = repo.get_media_item(item_id)
+    if row is None:
+        raise typer.BadParameter(f"item {item_id} not found")
+
+    def check(ftype, fn):
+        f = repo.get_file(item_id, ftype)
+        if f is None:
+            return False
+        return fn(_Path(f["path"])).ok
+
+    original_ok = check("original_media", validate_original)
+    audio_ok = check("processed_opus", validate_archive_audio)
+    mp4_ok = check("youtube_mp4", validate_youtube_video)
+
+    uploaded = repo.already_uploaded(item_id)
+    if uploaded:
+        recommended = MediaState.UPLOADED
+    elif mp4_ok and audio_ok and original_ok and row["rights_status"] in APPROVED_FOR_UPLOAD:
+        recommended = MediaState.READY_FOR_UPLOAD
+    elif audio_ok and original_ok:
+        recommended = MediaState.AUDIO_READY
+    else:
+        recommended = MediaState.DOWNLOAD_PENDING
+
+    console.print(f"[UP-REPAIR] item={item_id}")
+    console.print(f"  Database state : {row['state']}")
+    console.print(f"  Original       : {'VALID' if original_ok else 'MISSING/INVALID'}")
+    console.print(f"  Audio          : {'VALID' if audio_ok else 'MISSING/INVALID'}")
+    console.print(f"  Video          : {'VALID' if mp4_ok else 'MISSING/INVALID'}")
+    console.print(f"  Upload         : {'DONE ' + str(repo.get_upload_record(item_id)['platform_video_id']) if uploaded else 'NOT STARTED'}")
+    console.print(f"  Recommended    : {recommended}")
+
+    if apply and row["state"] != recommended:
+        # Walk forward through valid transitions only.
+        path_order = [
+            MediaState.DISCOVERED, MediaState.RIGHTS_REVIEW,
+            MediaState.DOWNLOAD_PENDING, MediaState.DOWNLOADING,
+            MediaState.DOWNLOADED, MediaState.AUDIO_PROCESSING,
+            MediaState.AUDIO_READY, MediaState.VIDEO_RENDERING,
+            MediaState.VALIDATION, MediaState.READY_FOR_UPLOAD,
+            MediaState.UPLOAD_QUEUED, MediaState.UPLOADING, MediaState.UPLOADED,
+        ]
+        cur = row["state"]
+        moved = False
+        try:
+            i_cur = [s.value if hasattr(s, "value") else s for s in path_order].index(cur)
+        except ValueError:
+            i_cur = -1
+        target = recommended.value if hasattr(recommended, "value") else recommended
+        for s in path_order[i_cur + 1:] if i_cur >= 0 else []:
+            s_val = s.value if hasattr(s, "value") else s
+            if not repo.transition(item_id, s_val):
+                break
+            moved = True
+            if s_val == target:
+                break
+        console.print(f"[UP-REPAIR] applied: state now "
+                      f"{repo.get_media_item(item_id)['state']} (moved={moved})")
+    elif apply:
+        console.print("[UP-REPAIR] nothing to change")
+
+
 if __name__ == "__main__":
     app()
