@@ -214,5 +214,18 @@ def inspect(
     console.print(inspect_media(settings, video_id=video_id))
 
 
+@app.command("diagnose")
+def diagnose(
+    config: Optional[str] = typer.Option(None, "--config", "-c", help="Path to config file."),
+) -> None:
+    """Run operational health checks (environment, database, tools, proxy)."""
+    from tadabbur.services.diagnose import run_diagnostics
+
+    settings = _settings(config)
+    report = run_diagnostics(settings)
+    console.print(str(report))
+    raise typer.Exit(code=1 if report.has_failure else 0)
+
+
 if __name__ == "__main__":
     app()
