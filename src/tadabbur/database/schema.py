@@ -2,13 +2,24 @@
 
 from __future__ import annotations
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 # Migrations from version N -> N+1 (each a list of SQL statements).
 MIGRATIONS: dict[int, list[str]] = {
     1: [
         "ALTER TABLE media ADD COLUMN series_key TEXT",
         "ALTER TABLE media ADD COLUMN session_number INTEGER",
+    ],
+    2: [
+        """
+        CREATE TABLE IF NOT EXISTS circuit_state (
+            name            TEXT PRIMARY KEY,
+            state           TEXT NOT NULL DEFAULT 'normal',
+            failure_count   INTEGER NOT NULL DEFAULT 0,
+            cooldown_until  REAL,
+            updated_at      TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+        )
+        """,
     ],
 }
 
@@ -147,6 +158,14 @@ CREATE TABLE IF NOT EXISTS state_transitions (
     from_status          TEXT NOT NULL,
     to_status            TEXT NOT NULL,
     created_at           TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
+CREATE TABLE IF NOT EXISTS circuit_state (
+    name            TEXT PRIMARY KEY,
+    state           TEXT NOT NULL DEFAULT 'normal',
+    failure_count   INTEGER NOT NULL DEFAULT 0,
+    cooldown_until  REAL,
+    updated_at      TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_transitions_media ON state_transitions(media_id);

@@ -506,3 +506,38 @@ class Repository:
         )
         self._conn.commit()
         return cur.rowcount
+
+    # ------------------------------------------------------- circuit state
+    def load_circuit_state(self, name: str = "download") -> dict | None:
+        """Load persisted circuit-breaker state (survives restarts)."""
+        row = self._conn.execute(
+            "SELECT * FROM circuit_state WHERE name = ?", (name,)
+        ).fetchone()
+        if row is None:
+            return None
+        return {
+            "state": row["state"],
+            "failure_count": row["failure_count"],
+            "cooldown_until": row["cooldown_until"],
+        }
+
+    def save_circuit_state(
+        self,
+        name: str,
+        state: str,
+        failure_count: int,
+        cooldown_until: float | None,
+    ) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO circuit_state (name, state, failure_count, cooldown_until, updated_at)
+            VALUES (?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+            ON CONFLICT(name) DO UPDATE SET
+                state = excluded.state,
+                failure_count = excluded.failure_count,
+                cooldown_until = excluded.cooldown_until,
+                updated_at = excluded.updated_at
+            """,
+            (name, state, failure_count, cooldown_until),
+        )
+        self._conn.commit()

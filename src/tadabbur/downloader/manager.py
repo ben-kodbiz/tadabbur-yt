@@ -89,7 +89,7 @@ def run_download(
     exists they are advanced, otherwise they are reset to QUEUED and retried.
     """
     client = client or YtDlpClient(settings)
-    breaker = circuit_breaker or CircuitBreaker(settings.circuit_breaker)
+    breaker = circuit_breaker or CircuitBreaker(settings.circuit_breaker, repository=repo)
 
     if video_id:
         row = repo.get_media_by_external_id(video_id)

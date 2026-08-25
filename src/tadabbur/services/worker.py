@@ -47,7 +47,7 @@ def run_worker(
     """Run the worker loop. Returns when shutdown is requested or once=True."""
     setup_logging()
     install_signal_handlers()
-    breaker = CircuitBreaker(settings.circuit_breaker)
+    # (breaker created after DB open, with persistence)
     _shutdown_event.clear()
 
     db_path = settings.storage.database_path
@@ -62,6 +62,7 @@ def run_worker(
 
     conn = open_database(db_path)
     repo = Repository(conn)
+    breaker = CircuitBreaker(settings.circuit_breaker, repository=repo)
     try:
         passes = 0
         while not _shutdown_event.is_set():
