@@ -43,6 +43,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 tadabbur = ["web/*.html", "web/*.css", "web/*.js"]
+"tadabbur.uploader" = ["dashboard_web/*.html", "dashboard_web/*.css", "dashboard_web/*.js"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

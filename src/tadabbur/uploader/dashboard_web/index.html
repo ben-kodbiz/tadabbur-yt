@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upload Pipeline — Tracking</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Upload Pipeline <span class="muted">/ tracking</span></h1>
+  <div id="summary" class="summary"></div>
+  <p class="muted" id="generated"></p>
+</header>
+
+<section class="controls">
+  <input id="search" type="search" placeholder="Search title, speaker, source…" autocomplete="off">
+  <select id="filter-upload">
+    <option value="">All upload statuses</option>
+    <option value="uploaded">Uploaded</option>
+    <option value="failed">Failed</option>
+    <option value="not_queued">Not queued</option>
+    <option value="blocked">Blocked</option>
+  </select>
+  <select id="filter-rights">
+    <option value="">All rights</option>
+    <option value="approved">Approved only</option>
+    <option value="manual_review_required">Manual review</option>
+    <option value="upload_not_authorized">Not authorized</option>
+  </select>
+</section>
+
+<main>
+<table id="items">
+  <thead>
+    <tr>
+      <th>Title</th><th>Speaker</th><th>Source</th><th>Rights</th>
+      <th>Pipeline state</th><th>Upload</th><th>When</th><th>Sizes MB (o/a/v)</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<p id="empty" class="muted hidden">No items yet. Run the pipeline first.</p>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

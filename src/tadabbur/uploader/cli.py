@@ -347,5 +347,20 @@ def process_cmd(
     raise typer.Exit(code=0 if outcome.ok else 1)
 
 
+@app.command("export-dashboard")
+def export_dashboard_cmd(
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """Export a read-only static tracking dashboard from pipeline.db."""
+    from tadabbur.uploader.export_dashboard import export_dashboard
+
+    up_settings, project_dir = _settings(config)
+    repo = _repo(up_settings, project_dir)
+    out = export_dashboard(project_dir, up_settings, repo)
+    console.print(f"[UP-DASH] dashboard written to {out}")
+    console.print(f"  open: file://{out}/index.html")
+    console.print(f"  or:   python -m http.server 8899 --directory {out}")
+
+
 if __name__ == "__main__":
     app()
