@@ -60,6 +60,19 @@ def _bool(v: bool) -> str:
     return "true" if v else "false"
 
 
+def get_effective_proxy(proxy_config, override_proxy: str | None = None) -> str | None:
+    """Single decision point for the effective proxy.
+
+    Priority: per-operation override > configured (enabled) proxy > none.
+    Guarantees at most one ``--proxy`` argument per yt-dlp invocation.
+    """
+    if override_proxy:
+        return override_proxy
+    if proxy_config.enabled and proxy_config.url:
+        return proxy_config.url
+    return None
+
+
 class YtDlpClient:
     """Safe wrapper around the ``yt-dlp`` binary."""
 
@@ -79,7 +92,7 @@ class YtDlpClient:
         return shutil.which(self.binary) is not None
 
     # --------------------------------------------------------------- helpers
-    def _base_args(self) -> list[str]:
+    def _base_args(self, *, proxy: str | None = None) -> list[str]:
         args = [
             self.binary,
             "--no-warnings",
@@ -91,12 +104,20 @@ class YtDlpClient:
             "--socket-timeout",
             str(self.settings.download.socket_timeout),
         ]
-        if self.settings.proxy.enabled and self.settings.proxy.url:
-            args += ["--proxy", self.settings.proxy.url]
+        args += self._proxy_args(proxy)
         rate = self.settings.download.limit_rate
         if rate:
             args += ["--limit-rate", rate]
         return args
+
+    def _proxy_args(self, override: str | None = None) -> list[str]:
+        """Exactly one effective ``--proxy`` per invocation.
+
+        Priority: per-operation override > configured proxy > none.
+        All proxy decisions are centralized here.
+        """
+        effective = get_effective_proxy(self.settings.proxy, override)
+        return ["--proxy", effective] if effective else []
 
     def _common_download_args(self) -> list[str]:
         d = self.settings.download
@@ -200,7 +221,7 @@ class YtDlpClient:
         proxy: str | None = None,
     ) -> YtDlpResult:
         d = self.settings.download
-        args = self._base_args() + [
+        args = self._base_args(proxy=proxy) + [
             "--merge-output-format",
             d.merge_output_format,
             "--format",
@@ -216,8 +237,6 @@ class YtDlpClient:
             if d.write_auto_subs:
                 args.append("--write-auto-subs")
             args += ["--sub-langs", d.sub_langs]
-        if proxy:
-            args += ["--proxy", proxy]
         args += self._common_download_args()
         args.append(url)
         return self.run(args)
@@ -230,7 +249,7 @@ class YtDlpClient:
         proxy: str | None = None,
     ) -> YtDlpResult:
         d = self.settings.download
-        args = self._base_args() + [
+        args = self._base_args(proxy=proxy) + [
             "--extract-audio",
             "--audio-format",
             d.audio_format,
@@ -241,8 +260,6 @@ class YtDlpClient:
             "--output",
             output_template,
         ]
-        if proxy:
-            args += ["--proxy", proxy]
         args += self._common_download_args()
         args.append(url)
         return self.run(args)
@@ -260,7 +277,7 @@ class YtDlpClient:
         re-encode is needed; falls back to ``bestaudio``. FFmpeg is only used
         to correct the container if required (fast).
         """
-        args = self._base_args() + [
+        args = self._base_args(proxy=proxy) + [
             "--newline",
             "--progress",
             "--format",
@@ -268,8 +285,6 @@ class YtDlpClient:
             "--output",
             output_template,
         ]
-        if proxy:
-            args += ["--proxy", proxy]
         args += self._common_download_args()
         args.append(url)
         return self.run(args)
