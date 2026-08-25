@@ -155,5 +155,94 @@ def review_cmd(
     console.print(f"[UP-REVIEW] item={item_id} -> {chosen} state={new_state}")
 
 
+@app.command("queue")
+def queue_cmd(
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """List items ready and eligible for upload (§18)."""
+    from tadabbur.uploader.queue import build_queue_plan
+
+    settings, project_dir = _settings(config)
+    repo = _repo(settings, project_dir)
+    plan = build_queue_plan(settings, repo)
+
+    table = Table(title=f"Upload queue ({len(plan.entries)} eligible)")
+    for col in ("ID", "Rights", "Title"):
+        table.add_column(col)
+    for e in plan.entries:
+        table.add_row(str(e.media_item_id), e.rights_status, e.title[:50])
+    console.print(table)
+
+    if plan.rejected:
+        console.print("[red]Rejected:[/red]")
+        for i, reason in plan.rejected:
+            console.print(f"  {i}: {reason}")
+
+
+@app.command("upload")
+def upload_cmd(
+    action: str = typer.Argument(..., help="run | item"),
+    item_id: Optional[int] = typer.Argument(None, help="Item id (for `item`)."),
+    limit: int = typer.Option(3, help="Max uploads this run."),
+    dry_run: bool = typer.Option(None, "--dry-run/--no-dry-run"),
+    config: Optional[str] = typer.Option(None, "--config", "-c"),
+) -> None:
+    """Upload queued items to YouTube (safety-limited, dry-run default)."""
+    from tadabbur.uploader.models import MediaState
+    from tadabbur.uploader.queue import check_daily_limit, build_queue_plan
+    from tadabbur.uploader.youtube import YouTubeClient, upload_item
+
+    settings, project_dir = _settings(config)
+    safety = settings.upload
+    do_dry_run = safety.dry_run_default if dry_run is None else dry_run
+
+    if not safety.enabled and not do_dry_run:
+        console.print(
+            "[UP-UPLOAD] blocked: upload.enabled=false in config "
+            "(require_manual_enable). Set enabled=true after review."
+        )
+        raise typer.Exit(code=2)
+
+    repo = _repo(settings, project_dir)
+    plan = build_queue_plan(settings, repo, limit=limit)
+
+    if action == "item":
+        if item_id is None or all(e.media_item_id != item_id for e in plan.entries):
+            console.print(f"[UP-UPLOAD] item={item_id} not eligible")
+            raise typer.Exit(code=1)
+
+    if do_dry_run:
+        console.print(f"[UP-UPLOAD] DRY RUN — would upload {len(plan.entries)} item(s):")
+        for e in plan.entries:
+            console.print(f"  {e.media_item_id}: {e.title[:60]}")
+        return
+
+    try:
+        check_daily_limit(settings, repo)
+    except Exception as exc:
+        console.print(f"[UP-UPLOAD] blocked: {exc}")
+        raise typer.Exit(code=2) from exc
+
+    client = YouTubeClient()
+    targets = [e.media_item_id for e in plan.entries]
+    if action == "item" and item_id is not None:
+        targets = [item_id]
+
+    uploaded = 0
+    for mid in targets:
+        outcome = upload_item(repo, settings, client, mid)
+        if outcome.ok:
+            uploaded += 1
+            console.print(f"[UP-UPLOAD] item={mid} -> {outcome.platform_url}")
+        else:
+            console.print(
+                f"[UP-UPLOAD] item={mid} failed ({outcome.category}): "
+                f"{(outcome.error or '')[:120]}"
+            )
+            if outcome.category == "AUTH_ERROR":
+                break
+    console.print(f"[UP-UPLOAD] done: {uploaded} uploaded")
+
+
 if __name__ == "__main__":
     app()

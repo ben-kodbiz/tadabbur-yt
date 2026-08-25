@@ -82,6 +82,8 @@ class UploaderRepository:
         published_at: str | None = None,
         duration_seconds: float | None = None,
         rights_status: str = UploadRightsStatus.MANUAL_REVIEW_REQUIRED,
+        rights_notes: str | None = None,
+        permission_reference: str | None = None,
         state: str = MediaState.DISCOVERED,
     ) -> int | None:
         """Insert a new item. Returns None when it already exists (dedup)."""
@@ -91,11 +93,13 @@ class UploaderRepository:
                 INSERT INTO media_items (source_id, platform, original_media_id,
                                          original_url, original_title, uploader_name,
                                          published_at, duration_seconds,
-                                         rights_status, state)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                         rights_status, rights_notes,
+                                         permission_reference, state)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (source_id, platform, original_media_id, original_url, original_title,
-                 uploader_name, published_at, duration_seconds, rights_status, state),
+                 uploader_name, published_at, duration_seconds, rights_status,
+                 rights_notes, permission_reference, state),
             )
             self._conn.commit()
             return int(cur.lastrowid)
