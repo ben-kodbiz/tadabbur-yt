@@ -73,6 +73,9 @@ class DownloadConfig(BaseModel):
     #: stalling every single invocation — including metadata inspects.
     sleep_interval: float = 1.0
     max_sleep_interval: float = 5.0
+    #: Regenerate the web display JSON automatically after each download run.
+    #: Failures here are logged but never affect download results.
+    auto_export: bool = False
     #: Wall-clock budget for one full download invocation. Must exceed the
     #: yt-dlp sleep interval range (backoff.base_delay..backoff.max_delay)
     #: plus transfer time, or attempts get killed mid-sleep.

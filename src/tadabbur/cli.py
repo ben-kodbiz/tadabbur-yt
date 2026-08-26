@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -83,12 +84,36 @@ def download(
     config: Optional[str] = typer.Option(None, "--config", "-c", help="Path to config file."),
     video_id: Optional[str] = typer.Option(None, "--video", help="Download a specific video id."),
     limit: int = typer.Option(1, "--limit", help="Maximum items to process."),
+    export: Optional[bool] = typer.Option(
+        None, "--export/--no-export",
+        help="Refresh the web display JSON afterwards (overrides download.auto_export).",
+    ),
 ) -> None:
     """Download queued media and extract audio."""
     from tadabbur.services.download import run_download
 
     settings = _settings(config)
     console.print(run_download(settings, video_id=video_id, limit=limit))
+
+    do_export = settings.download.auto_export if export is None else export
+    if not video_id and do_export:
+        try:
+            from tadabbur.database import Repository, open_database
+            from tadabbur.exporters import export_web_data
+
+            db_path = settings.storage.database_path
+            if not db_path.is_absolute():
+                db_path = settings.project_dir / db_path
+            conn = open_database(db_path)
+            try:
+                result = export_web_data(settings, Repository(conn), mode="library")
+                console.print(f"[EXPORT] refreshed web display: {result.count} items")
+            finally:
+                conn.close()
+        except Exception as exc:  # noqa: BLE001 - display refresh must never break downloads
+            logging.getLogger("tadabbur").warning(
+                "[EXPORT] auto-refresh failed (downloads unaffected): %s", exc
+            )
 
 
 @app.command("process")
