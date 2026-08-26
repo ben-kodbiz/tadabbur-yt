@@ -45,6 +45,9 @@ def run_retry(settings: Settings, *, failed: bool = False, video_id: str | None 
                 row["external_id"],
             )
             repo.transition_media(int(row["id"]), QUEUED)
+            # Reset the attempt budget so the item actually retries
+            # (otherwise count_media_failures exceeds max_attempts forever).
+            repo.clear_download_attempts(int(row["id"]))
             lines.append(f"{row['external_id']} -> QUEUED")
             count += 1
 

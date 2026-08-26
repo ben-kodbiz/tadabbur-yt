@@ -456,6 +456,17 @@ class Repository:
         ).fetchone()
         return int(row["c"])
 
+    def clear_download_attempts(self, media_id: int) -> None:
+        """Reset the attempt budget when an operator requeues a failed item.
+
+        Without this, items that exhausted max_attempts can never retry:
+        count_media_failures() keeps exceeding the limit forever.
+        """
+        self._conn.execute(
+            "DELETE FROM download_attempts WHERE media_id = ?", (media_id,)
+        )
+        self._conn.commit()
+
     # ------------------------------------------------------------ publish jobs
     def create_publish_job(self, media_id: int, publisher: str) -> int:
         cur = self._conn.execute(

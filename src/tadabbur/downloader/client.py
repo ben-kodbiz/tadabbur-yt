@@ -98,9 +98,9 @@ class YtDlpClient:
             "--no-warnings",
             "--no-color",
             "--sleep-interval",
-            str(self.settings.backoff.base_delay),
+            str(self.settings.download.sleep_interval),
             "--max-sleep-interval",
-            str(self.settings.backoff.max_delay),
+            str(self.settings.download.max_sleep_interval),
             "--socket-timeout",
             str(self.settings.download.socket_timeout),
         ]
@@ -141,6 +141,10 @@ class YtDlpClient:
         if not self.settings.download.resume:
             return ["--no-part"]
         return []
+
+    def _run_download(self, args: list[str]) -> YtDlpResult:
+        """Execute a media download with the configured time budget."""
+        return self.run(args, timeout=self.settings.download.download_timeout)
 
     def run(self, args: list[str], *, timeout: int | None = None) -> YtDlpResult:
         """Execute yt-dlp with the given arguments (full argv provided)."""
@@ -239,7 +243,7 @@ class YtDlpClient:
             args += ["--sub-langs", d.sub_langs]
         args += self._common_download_args()
         args.append(url)
-        return self.run(args)
+        return self._run_download(args)
 
     def download_audio(
         self,
@@ -262,7 +266,7 @@ class YtDlpClient:
         ]
         args += self._common_download_args()
         args.append(url)
-        return self.run(args)
+        return self._run_download(args)
 
     def download_lowest(
         self,
@@ -287,7 +291,7 @@ class YtDlpClient:
         ]
         args += self._common_download_args()
         args.append(url)
-        return self.run(args)
+        return self._run_download(args)
 
     # --------------------------------------------------------------- parsing
     @staticmethod

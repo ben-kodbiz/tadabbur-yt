@@ -66,6 +66,17 @@ class DownloadConfig(BaseModel):
     concurrent_fragments: int = 4
     timeout: int = 30
     socket_timeout: int = 30
+    #: Wall-clock budget for one full download invocation.
+    download_timeout: int = 3600
+    #: yt-dlp politeness sleep between requests (seconds). Kept small:
+    #: previously backoff.base/max_delay (10..300s random) leaked into these,
+    #: stalling every single invocation — including metadata inspects.
+    sleep_interval: float = 1.0
+    max_sleep_interval: float = 5.0
+    #: Wall-clock budget for one full download invocation. Must exceed the
+    #: yt-dlp sleep interval range (backoff.base_delay..backoff.max_delay)
+    #: plus transfer time, or attempts get killed mid-sleep.
+    download_timeout: int = 3600
     limit_rate: str | None = None
     audio_only: bool = False
     resume: bool = True
